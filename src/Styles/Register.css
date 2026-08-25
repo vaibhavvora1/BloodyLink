@@ -1,0 +1,120 @@
+
+
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap");
+
+:root {
+  --bl-bg: #faf9f7;
+  --bl-card: #ffffff;
+  --bl-border: #e5e1d8;
+  --bl-red: #b3161b;
+  --bl-gold: #b8860b;
+  --bl-gold-soft: #d4af37;
+  --bl-text: #1a1a1a;
+  --bl-text-muted: #6b6b6b;
+}
+
+.register-page {
+  background: var(--bl-bg);
+  font-family: "DM Sans", sans-serif;
+  color: var(--bl-text);
+  min-height: 100vh;
+}
+
+.text-gold {
+  color: var(--bl-gold);
+}
+
+.register-card {
+  background: var(--bl-card);
+  border: 1px solid var(--bl-border);
+  border-radius: 16px;
+  padding: 2.5rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+}
+
+.register-card h2 {
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 600;
+}
+
+.form-label {
+  font-weight: 500;
+  color: var(--bl-text);
+  margin-bottom: 0.35rem;
+}
+
+.form-control,
+.form-select {
+  background: var(--bl-bg);
+  border: 1px solid var(--bl-border);
+  color: var(--bl-text);
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+}
+
+.form-control:focus,
+.form-select:focus {
+  background: var(--bl-card);
+  border-color: var(--bl-gold);
+  box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.15);
+  color: var(--bl-text);
+}
+
+.form-control.is-invalid,
+.form-check-input.is-invalid {
+  border-color: var(--bl-red);
+}
+
+.invalid-feedback {
+  color: var(--bl-red);
+  font-size: 0.82rem;
+}
+
+.form-check-input:checked {
+  background-color: var(--bl-gold);
+  border-color: var(--bl-gold);
+}
+
+.form-check-input:focus {
+  box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.15);
+}
+
+.btn-gold {
+  background: linear-gradient(135deg, var(--bl-gold-soft), var(--bl-gold));
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-gold:hover:not(:disabled) {
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(184, 134, 11, 0.28);
+}
+
+.btn-gold:disabled {
+  opacity: 0.7;
+}
+
+.register-card a {
+  color: var(--bl-gold);
+  text-decoration: none;
+}
+
+.register-card a:hover {
+  text-decoration: underline;
+}
+
+.alert-danger {
+  background: rgba(179, 22, 27, 0.06);
+  border: 1px solid rgba(179, 22, 27, 0.3);
+  color: var(--bl-red);
+  border-radius: 10px;
+}
+
+@media (max-width: 575px) {
+  .register-card {
+    padding: 1.75rem 1.25rem;
+  }
+}

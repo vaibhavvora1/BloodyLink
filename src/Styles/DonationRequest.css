@@ -1,0 +1,174 @@
+/* ===================== Bloolink Donation Request — Light Theme ===================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap");
+
+:root {
+  --bl-bg: #faf9f7;
+  --bl-card: #ffffff;
+  --bl-border: #e5e1d8;
+  --bl-red: #b3161b;
+  --bl-gold: #b8860b;
+  --bl-gold-soft: #d4af37;
+  --bl-text: #1a1a1a;
+  --bl-text-muted: #6b6b6b;
+}
+
+.donation-request-page {
+  background: var(--bl-bg);
+  font-family: "DM Sans", sans-serif;
+  color: var(--bl-text);
+  min-height: 100vh;
+}
+
+.text-gold {
+  color: var(--bl-gold);
+}
+
+h2, h6 {
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 600;
+}
+
+.request-badge {
+  background: rgba(179, 22, 27, 0.08);
+  color: var(--bl-red);
+  border: 1px solid rgba(179, 22, 27, 0.3);
+  font-weight: 500;
+  font-size: 0.78rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 50px;
+}
+
+.request-card {
+  background: var(--bl-card);
+  border: 1px solid var(--bl-border);
+  border-radius: 16px;
+  padding: 2.25rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+}
+
+.section-label {
+  color: var(--bl-gold);
+  font-size: 1.05rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--bl-border);
+}
+
+.form-label {
+  font-weight: 500;
+  color: var(--bl-text);
+  margin-bottom: 0.35rem;
+  font-size: 0.9rem;
+}
+
+.form-control,
+.form-select {
+  background: var(--bl-bg);
+  border: 1px solid var(--bl-border);
+  color: var(--bl-text);
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+}
+
+.form-control:focus,
+.form-select:focus {
+  background: var(--bl-card);
+  border-color: var(--bl-gold);
+  box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.15);
+  color: var(--bl-text);
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+  border-color: var(--bl-red);
+}
+
+.invalid-feedback {
+  color: var(--bl-red);
+  font-size: 0.8rem;
+}
+
+/* ===== Urgency selector ===== */
+.urgency-option {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  border: 1px solid var(--bl-border);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  background: var(--bl-bg);
+  transition: border-color 0.2s ease, background 0.2s ease;
+  height: 100%;
+}
+
+.urgency-option:hover {
+  border-color: var(--bl-gold);
+}
+
+.urgency-option.selected {
+  border-color: var(--bl-gold);
+  background: rgba(184, 134, 11, 0.06);
+}
+
+.urgency-option.is-invalid {
+  border-color: var(--bl-red);
+}
+
+.urgency-title {
+  font-weight: 600;
+  color: var(--bl-text);
+  font-size: 0.95rem;
+}
+
+.urgency-desc {
+  color: var(--bl-text-muted);
+  font-size: 0.78rem;
+}
+
+/* ===== Checkbox ===== */
+.form-check-input:checked {
+  background-color: var(--bl-gold);
+  border-color: var(--bl-gold);
+}
+
+.form-check-input.is-invalid {
+  border-color: var(--bl-red);
+}
+
+.form-check-input:focus {
+  box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.15);
+}
+
+/* ===== Button ===== */
+.btn-gold {
+  background: linear-gradient(135deg, var(--bl-gold-soft), var(--bl-gold));
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-gold:hover:not(:disabled) {
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(184, 134, 11, 0.28);
+}
+
+.btn-gold:disabled {
+  opacity: 0.7;
+}
+
+.alert-danger {
+  background: rgba(179, 22, 27, 0.06);
+  border: 1px solid rgba(179, 22, 27, 0.3);
+  color: var(--bl-red);
+  border-radius: 10px;
+}
+
+@media (max-width: 575px) {
+  .request-card {
+    padding: 1.5rem 1.25rem;
+  }
+}
