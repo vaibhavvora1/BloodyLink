@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../Styles/Register.css";
 
 const initialForm = {
@@ -393,9 +393,7 @@ const Register = () => {
                         onBlur={handleBlur}
                       />
                       <label className="form-check-label" htmlFor="terms">
-                        I agree to the{" "}
-                        <Link to="/terms">Terms &amp; Conditions</Link> and{" "}
-                        <Link to="/privacy">Privacy Policy</Link>.
+                        I agree to the Terms &amp; Conditions and Privacy Policy.
                       </label>
                       {errors.terms && (
                         <div className="text-danger small mt-1">

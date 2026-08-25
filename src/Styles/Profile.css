@@ -1,0 +1,166 @@
+/* ===================== Bloolink Profile — Light Theme ===================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap");
+
+:root {
+  --bl-bg: #faf9f7;
+  --bl-card: #ffffff;
+  --bl-border: #e5e1d8;
+  --bl-red: #b3161b;
+  --bl-gold: #b8860b;
+  --bl-gold-soft: #d4af37;
+  --bl-text: #1a1a1a;
+  --bl-text-muted: #6b6b6b;
+}
+
+.profile-page {
+  background: var(--bl-bg);
+  font-family: "DM Sans", sans-serif;
+  color: var(--bl-text);
+  min-height: 100vh;
+}
+
+.text-gold {
+  color: var(--bl-gold);
+}
+
+h4, h5, h6 {
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 600;
+}
+
+.profile-card {
+  background: var(--bl-card);
+  border: 1px solid var(--bl-border);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.04);
+  height: 100%;
+}
+
+.profile-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 3px solid var(--bl-gold);
+  object-fit: cover;
+}
+
+.blood-group-chip {
+  display: inline-block;
+  background: var(--bl-red);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.3rem 0.9rem;
+  border-radius: 8px;
+}
+
+.stat-number {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--bl-gold);
+}
+
+.profile-card hr {
+  border-color: var(--bl-border);
+  opacity: 1;
+}
+
+.form-label {
+  font-weight: 500;
+  color: var(--bl-text);
+  margin-bottom: 0.35rem;
+  font-size: 0.9rem;
+}
+
+.form-control,
+.form-select {
+  background: var(--bl-bg);
+  border: 1px solid var(--bl-border);
+  color: var(--bl-text);
+  padding: 0.55rem 0.85rem;
+  border-radius: 8px;
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  background: var(--bl-bg);
+  color: var(--bl-text-muted);
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+.form-control:focus,
+.form-select:focus {
+  background: var(--bl-card);
+  border-color: var(--bl-gold);
+  box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.15);
+  color: var(--bl-text);
+}
+
+.form-control.is-invalid {
+  border-color: var(--bl-red);
+}
+
+.invalid-feedback {
+  color: var(--bl-red);
+  font-size: 0.8rem;
+}
+
+.form-check-input:checked {
+  background-color: var(--bl-gold);
+  border-color: var(--bl-gold);
+}
+
+.btn-gold {
+  background: linear-gradient(135deg, var(--bl-gold-soft), var(--bl-gold));
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-gold:hover:not(:disabled) {
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(184, 134, 11, 0.25);
+}
+
+.btn-outline-gold {
+  border: 1px solid var(--bl-gold);
+  color: var(--bl-gold);
+  background: transparent;
+  font-weight: 500;
+}
+
+.btn-outline-gold:hover {
+  background: var(--bl-gold);
+  color: #fff;
+}
+
+.btn-outline-light {
+  border-color: var(--bl-border);
+  color: var(--bl-text);
+  background: var(--bl-card);
+}
+
+.btn-outline-light:hover:not(:disabled) {
+  background: var(--bl-bg);
+  border-color: var(--bl-gold);
+  color: var(--bl-gold);
+}
+
+.alert-success {
+  background: rgba(46, 204, 113, 0.08);
+  border: 1px solid rgba(46, 204, 113, 0.3);
+  color: #1f9d57;
+  border-radius: 10px;
+}
+
+@media (max-width: 575px) {
+  .profile-card {
+    padding: 1.5rem 1.25rem;
+  }
+}

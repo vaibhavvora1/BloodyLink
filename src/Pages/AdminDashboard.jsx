@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import "../Styles/AdminDashboard.css";
 
 const initialRequests = [
@@ -56,27 +56,40 @@ const donorRegistrations = [
   { name: "Neha Joshi", group: "AB-", city: "Ahmedabad", date: "20 Aug 2026", status: "Pending" },
 ];
 
-const inventory = [
-  { group: "A+", units: 45 },
-  { group: "A-", units: 12 },
-  { group: "B+", units: 60 },
-  { group: "B-", units: 8 },
-  { group: "AB+", units: 30 },
-  { group: "AB-", units: 15 },
-  { group: "O+", units: 90 },
-  { group: "O-", units: 20 },
+const initialStock = [
+  { group: "A+", units: 45, threshold: 20, updated: "24 Aug 2026" },
+  { group: "A-", units: 12, threshold: 20, updated: "23 Aug 2026" },
+  { group: "B+", units: 60, threshold: 20, updated: "24 Aug 2026" },
+  { group: "B-", units: 8, threshold: 20, updated: "22 Aug 2026" },
+  { group: "AB+", units: 30, threshold: 15, updated: "23 Aug 2026" },
+  { group: "AB-", units: 15, threshold: 15, updated: "21 Aug 2026" },
+  { group: "O+", units: 90, threshold: 30, updated: "24 Aug 2026" },
+  { group: "O-", units: 20, threshold: 30, updated: "24 Aug 2026" },
 ];
 
-const getLevel = (units) => {
-  if (units < 20) return { label: "Critical", className: "level-critical" };
-  if (units < 50) return { label: "Low", className: "level-low" };
-  if (units < 80) return { label: "Adequate", className: "level-adequate" };
+const getLevel = (units, threshold = 20) => {
+  if (units < threshold) return { label: "Critical", className: "level-critical" };
+  if (units < threshold * 2.5) return { label: "Low", className: "level-low" };
+  if (units < threshold * 4) return { label: "Adequate", className: "level-adequate" };
   return { label: "Well Stocked", className: "level-good" };
 };
+
+const todayLabel = () =>
+  new Date().toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [requests, setRequests] = useState(initialRequests);
+
+  const [stock, setStock] = useState(initialStock);
+  const [stockSearch, setStockSearch] = useState("");
+  const [stockLevelFilter, setStockLevelFilter] = useState("all");
+  const [editingGroup, setEditingGroup] = useState(null);
+  const [editUnits, setEditUnits] = useState("");
 
   const handleApprove = (id) => {
     setRequests((prev) =>
@@ -95,6 +108,63 @@ const AdminDashboard = () => {
     if (status === "Approved") return "status-pill status-approved";
     if (status === "Rejected") return "status-pill status-rejected";
     return "status-pill status-pending";
+  };
+
+  const stockRows = useMemo(() => {
+    let result = stock.map((s) => ({ ...s, level: getLevel(s.units, s.threshold) }));
+
+    if (stockSearch.trim()) {
+      result = result.filter((r) =>
+        r.group.toLowerCase().includes(stockSearch.trim().toLowerCase())
+      );
+    }
+    if (stockLevelFilter !== "all") {
+      result = result.filter((r) => r.level.className === stockLevelFilter);
+    }
+    return result;
+  }, [stock, stockSearch, stockLevelFilter]);
+
+  const stockTotals = useMemo(() => {
+    const totalUnits = stock.reduce((sum, s) => sum + s.units, 0);
+    const criticalCount = stock.filter(
+      (s) => getLevel(s.units, s.threshold).className === "level-critical"
+    ).length;
+    return { totalUnits, criticalCount };
+  }, [stock]);
+
+  const adjustUnits = (group, delta) => {
+    // Replace with real API call, e.g. axios.patch(`/api/inventory/${group}`, { delta });
+    setStock((prev) =>
+      prev.map((s) =>
+        s.group === group
+          ? { ...s, units: Math.max(0, s.units + delta), updated: todayLabel() }
+          : s
+      )
+    );
+  };
+
+  const startEdit = (row) => {
+    setEditingGroup(row.group);
+    setEditUnits(String(row.units));
+  };
+
+  const cancelEdit = () => {
+    setEditingGroup(null);
+    setEditUnits("");
+  };
+
+  const saveEdit = (group) => {
+    const parsed = parseInt(editUnits, 10);
+    if (Number.isNaN(parsed) || parsed < 0) return;
+
+    // Replace with real API call, e.g. axios.patch(`/api/inventory/${group}`, { units: parsed });
+    setStock((prev) =>
+      prev.map((s) =>
+        s.group === group ? { ...s, units: parsed, updated: todayLabel() } : s
+      )
+    );
+    setEditingGroup(null);
+    setEditUnits("");
   };
 
   return (
@@ -208,40 +278,156 @@ const AdminDashboard = () => {
               </div>
             </div>
 
-            {/* Blood Inventory */}
+            {/* Blood Stock Table */}
             <div className="dashboard-card mt-4">
-              <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+              <div className="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
                 <div>
-                  <h5 className="mb-1">Blood Inventory</h5>
+                  <h5 className="mb-1">Blood Stock</h5>
                   <p className="text-muted small mb-0">
-                    Live stock levels across all blood groups
+                    {stockTotals.totalUnits} total units
+                    {stockTotals.criticalCount > 0 && (
+                      <span className="critical-flag ms-2">
+                        ⚠ {stockTotals.criticalCount} group
+                        {stockTotals.criticalCount > 1 ? "s" : ""} critical
+                      </span>
+                    )}
                   </p>
                 </div>
-                <a href="#inventory" className="btn btn-outline-gold btn-sm">
-                  Manage Stock
-                </a>
+                <button className="btn btn-gold btn-sm px-3">
+                  + Log New Stock
+                </button>
               </div>
-              <div className="row g-3 inventory-grid">
-                {inventory.map((item) => {
-                  const level = getLevel(item.units);
-                  return (
-                    <div className="col-6 col-md-3" key={item.group}>
-                      <div className="inventory-card">
-                        <div className="vial">
-                          <div
-                            className={`vial-fill ${level.className}`}
-                            style={{ height: `${Math.min(item.units, 100)}%` }}
-                          />
-                        </div>
-                        <h6 className="mt-2 mb-0">{item.group}</h6>
-                        <p className="unit-count mb-1">{item.units} units</p>
-                        <span className={`level-tag ${level.className}`}>
-                          {level.label}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
+
+              <div className="row g-2 mb-3">
+                <div className="col-sm-6 col-md-4">
+                  <input
+                    type="text"
+                    className="form-control form-control-sm"
+                    placeholder="Search blood group..."
+                    value={stockSearch}
+                    onChange={(e) => setStockSearch(e.target.value)}
+                  />
+                </div>
+                <div className="col-sm-6 col-md-4">
+                  <select
+                    className="form-select form-select-sm"
+                    value={stockLevelFilter}
+                    onChange={(e) => setStockLevelFilter(e.target.value)}
+                  >
+                    <option value="all">All Levels</option>
+                    <option value="level-critical">Critical</option>
+                    <option value="level-low">Low</option>
+                    <option value="level-adequate">Adequate</option>
+                    <option value="level-good">Well Stocked</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="table-responsive">
+                <table className="table align-middle dashboard-table stock-table">
+                  <thead>
+                    <tr>
+                      <th>Blood Group</th>
+                      <th>Units Available</th>
+                      <th>Stock Level</th>
+                      <th>Threshold</th>
+                      <th>Last Updated</th>
+                      <th className="text-end">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {stockRows.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="text-center text-muted py-4">
+                          No blood groups match your filters.
+                        </td>
+                      </tr>
+                    ) : (
+                      stockRows.map((r) => (
+                        <tr key={r.group}>
+                          <td>
+                            <span className="blood-group-chip-sm">{r.group}</span>
+                          </td>
+                          <td>
+                            {editingGroup === r.group ? (
+                              <input
+                                type="number"
+                                min={0}
+                                className="form-control form-control-sm units-input"
+                                value={editUnits}
+                                onChange={(e) => setEditUnits(e.target.value)}
+                                autoFocus
+                              />
+                            ) : (
+                              <div className="d-flex align-items-center gap-2">
+                                <button
+                                  className="qty-btn"
+                                  aria-label={`Decrease ${r.group} stock`}
+                                  onClick={() => adjustUnits(r.group, -1)}
+                                >
+                                  −
+                                </button>
+                                <span className="fw-semibold">{r.units}</span>
+                                <button
+                                  className="qty-btn"
+                                  aria-label={`Increase ${r.group} stock`}
+                                  onClick={() => adjustUnits(r.group, 1)}
+                                >
+                                  +
+                                </button>
+                              </div>
+                            )}
+                          </td>
+                          <td>
+                            <div className="level-cell">
+                              <div className="level-bar-track">
+                                <div
+                                  className={`level-bar-fill ${r.level.className}`}
+                                  style={{
+                                    width: `${Math.min(
+                                      (r.units / (r.threshold * 4)) * 100,
+                                      100
+                                    )}%`,
+                                  }}
+                                />
+                              </div>
+                              <span className={`level-tag ${r.level.className}`}>
+                                {r.level.label}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="text-muted">{r.threshold} units</td>
+                          <td className="text-muted">{r.updated}</td>
+                          <td className="text-end">
+                            {editingGroup === r.group ? (
+                              <div className="d-flex gap-2 justify-content-end">
+                                <button
+                                  className="btn btn-outline-light btn-sm"
+                                  onClick={cancelEdit}
+                                >
+                                  Cancel
+                                </button>
+                                <button
+                                  className="btn btn-gold btn-sm"
+                                  onClick={() => saveEdit(r.group)}
+                                >
+                                  Save
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                className="btn btn-outline-gold btn-sm"
+                                onClick={() => startEdit(r)}
+                              >
+                                Edit
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
 

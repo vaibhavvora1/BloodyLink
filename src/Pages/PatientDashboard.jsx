@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import "../Styles/PatientDashboard.css";
 
 const PatientDashboard = () => {
@@ -97,9 +98,9 @@ const PatientDashboard = () => {
                   Track your blood requests and find nearby donors.
                 </p>
               </div>
-              <button className="btn btn-gold px-4">
+              <Link to="/request-blood" className="btn btn-gold px-4 text-decoration-none">
                 + New Blood Request
-              </button>
+              </Link>
             </div>
 
             {/* Stat cards */}
@@ -219,9 +220,12 @@ const PatientDashboard = () => {
                 <div className="dashboard-card h-100">
                   <h5 className="mb-3">Quick Actions</h5>
                   <div className="d-grid gap-2">
-                    <button className="btn btn-gold text-start px-3">
+                    <Link
+                      to="/request-blood"
+                      className="btn btn-gold text-start px-3 text-decoration-none"
+                    >
                       🩸 Request Blood Now
-                    </button>
+                    </Link>
                     <button className="btn btn-outline-light text-start px-3">
                       📁 Upload Medical Records
                     </button>
