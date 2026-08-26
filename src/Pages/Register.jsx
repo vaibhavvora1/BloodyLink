@@ -1,36 +1,30 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "../Styles/Register.css";
+import { Link, useNavigate } from "react-router-dom";
+import "../Styles/Auth.css";
 
 const initialForm = {
-  fullName: "",
+  name: "",
   email: "",
   phone: "",
-  bloodGroup: "",
-  dob: "",
-  gender: "",
-  city: "",
   password: "",
   confirmPassword: "",
-  terms: false,
 };
-
-const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
 const Register = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState("");
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     }));
-    // Clear the field-level error as soon as the user edits it
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
@@ -38,7 +32,7 @@ const Register = () => {
 
   const validateField = (name, value) => {
     switch (name) {
-      case "fullName": {
+      case "name": {
         if (!value.trim()) return "Full name is required.";
         if (value.trim().length < 3) return "Name must be at least 3 characters.";
         if (!/^[A-Za-z\s.'-]+$/.test(value.trim()))
@@ -52,50 +46,19 @@ const Register = () => {
         return "";
       }
       case "phone": {
-        if (!value.trim()) return "Phone number is required.";
+        if (!value.trim()) return "Mobile number is required.";
         if (!/^[6-9]\d{9}$/.test(value.trim()))
           return "Enter a valid 10-digit mobile number.";
         return "";
       }
-      case "bloodGroup": {
-        if (!value) return "Please select your blood group.";
-        return "";
-      }
-      case "dob": {
-        if (!value) return "Date of birth is required.";
-        const dob = new Date(value);
-        if (Number.isNaN(dob.getTime())) return "Enter a valid date.";
-        const today = new Date();
-        let age = today.getFullYear() - dob.getFullYear();
-        const m = today.getMonth() - dob.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
-        if (age < 18) return "You must be at least 18 years old to register.";
-        if (age > 65) return "Donor age must be 65 or below.";
-        return "";
-      }
-      case "gender": {
-        if (!value) return "Please select your gender.";
-        return "";
-      }
-      case "city": {
-        if (!value.trim()) return "City is required.";
-        if (value.trim().length < 2) return "Enter a valid city name.";
-        return "";
-      }
       case "password": {
         if (!value) return "Password is required.";
-        if (value.length < 8) return "Password must be at least 8 characters.";
-        if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(value))
-          return "Password needs an uppercase letter, a lowercase letter, and a number.";
+        if (value.length < 6) return "Password must be at least 6 characters.";
         return "";
       }
       case "confirmPassword": {
         if (!value) return "Please confirm your password.";
         if (value !== form.password) return "Passwords do not match.";
-        return "";
-      }
-      case "terms": {
-        if (!value) return "You must accept the terms to continue.";
         return "";
       }
       default:
@@ -104,9 +67,8 @@ const Register = () => {
   };
 
   const handleBlur = (e) => {
-    const { name, value, type, checked } = e.target;
-    const fieldValue = type === "checkbox" ? checked : value;
-    const error = validateField(name, fieldValue);
+    const { name, value } = e.target;
+    const error = validateField(name, value);
     setErrors((prev) => ({ ...prev, [name]: error }));
   };
 
@@ -116,7 +78,6 @@ const Register = () => {
       const error = validateField(key, form[key]);
       if (error) newErrors[key] = error;
     });
-    // Re-check confirmPassword against the latest password value
     if (!newErrors.confirmPassword && form.password !== form.confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match.";
     }
@@ -132,12 +93,11 @@ const Register = () => {
 
     try {
       setSubmitting(true);
+      // Simulate registration request
+      await new Promise((resolve) => setTimeout(resolve, 800));
 
-      // Replace with your real API call, e.g.:
-      // await axios.post("/api/donors/register", form);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      navigate("/", { state: { registered: true } });
+      // Redirect to login page on success
+      navigate("/login", { state: { registered: true, email: form.email } });
     } catch (err) {
       setServerError(
         err?.response?.data?.message ||
@@ -152,17 +112,17 @@ const Register = () => {
     "form-control" + (errors[name] ? " is-invalid" : "");
 
   return (
-    <div className="register-page py-5">
+    <div className="auth-page">
       <div className="container">
         <div className="row justify-content-center">
-          <div className="col-lg-7 col-xl-6">
-            <div className="register-card">
+          <div className="col-md-8 col-lg-6 col-xl-5">
+            <div className="auth-card">
               <div className="text-center mb-4">
                 <h2 className="mb-1">
-                  Become a <span className="text-gold">Bloodlink</span> Donor
+                  Create <span className="text-gold">Account</span>
                 </h2>
-                <p className="text-muted mb-0">
-                  Share life, give blood — register in a few minutes.
+                <p className="auth-subtitle mb-0">
+                  Join Bloodlink to share life and connect with donors.
                 </p>
               </div>
 
@@ -176,26 +136,26 @@ const Register = () => {
                 <div className="row g-3">
                   {/* Full Name */}
                   <div className="col-12">
-                    <label htmlFor="fullName" className="form-label">
+                    <label htmlFor="name" className="form-label">
                       Full Name
                     </label>
                     <input
                       type="text"
-                      id="fullName"
-                      name="fullName"
-                      className={fieldClass("fullName")}
+                      id="name"
+                      name="name"
+                      className={fieldClass("name")}
                       placeholder="e.g. Vaibhav Vora"
-                      value={form.fullName}
+                      value={form.name}
                       onChange={handleChange}
                       onBlur={handleBlur}
                     />
-                    {errors.fullName && (
-                      <div className="invalid-feedback">{errors.fullName}</div>
+                    {errors.name && (
+                      <div className="invalid-feedback">{errors.name}</div>
                     )}
                   </div>
 
                   {/* Email */}
-                  <div className="col-md-6">
+                  <div className="col-12">
                     <label htmlFor="email" className="form-label">
                       Email Address
                     </label>
@@ -204,7 +164,7 @@ const Register = () => {
                       id="email"
                       name="email"
                       className={fieldClass("email")}
-                      placeholder="you@example.com"
+                      placeholder="name@example.com"
                       value={form.email}
                       onChange={handleChange}
                       onBlur={handleBlur}
@@ -214,10 +174,10 @@ const Register = () => {
                     )}
                   </div>
 
-                  {/* Phone */}
-                  <div className="col-md-6">
+                  {/* Mobile No. */}
+                  <div className="col-12">
                     <label htmlFor="phone" className="form-label">
-                      Phone Number
+                      Mobile Number
                     </label>
                     <input
                       type="tel"
@@ -235,141 +195,61 @@ const Register = () => {
                     )}
                   </div>
 
-                  {/* Blood Group */}
-                  <div className="col-md-6">
-                    <label htmlFor="bloodGroup" className="form-label">
-                      Blood Group
-                    </label>
-                    <select
-                      id="bloodGroup"
-                      name="bloodGroup"
-                      className={fieldClass("bloodGroup")}
-                      value={form.bloodGroup}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    >
-                      <option value="">Select blood group</option>
-                      {BLOOD_GROUPS.map((bg) => (
-                        <option key={bg} value={bg}>
-                          {bg}
-                        </option>
-                      ))}
-                    </select>
-                    {errors.bloodGroup && (
-                      <div className="invalid-feedback">{errors.bloodGroup}</div>
-                    )}
-                  </div>
-
-                  {/* Date of Birth */}
-                  <div className="col-md-6">
-                    <label htmlFor="dob" className="form-label">
-                      Date of Birth
-                    </label>
-                    <input
-                      type="date"
-                      id="dob"
-                      name="dob"
-                      className={fieldClass("dob")}
-                      value={form.dob}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      max={new Date().toISOString().split("T")[0]}
-                    />
-                    {errors.dob && (
-                      <div className="invalid-feedback">{errors.dob}</div>
-                    )}
-                  </div>
-
-                  {/* Gender */}
-                  <div className="col-md-6">
-                    <label className="form-label d-block">Gender</label>
-                    <div className="d-flex gap-3 pt-1">
-                      {["Male", "Female", "Other"].map((g) => (
-                        <div className="form-check" key={g}>
-                          <input
-                            className={
-                              "form-check-input" +
-                              (errors.gender ? " is-invalid" : "")
-                            }
-                            type="radio"
-                            name="gender"
-                            id={`gender-${g}`}
-                            value={g}
-                            checked={form.gender === g}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                          />
-                          <label
-                            className="form-check-label"
-                            htmlFor={`gender-${g}`}
-                          >
-                            {g}
-                          </label>
-                        </div>
-                      ))}
-                    </div>
-                    {errors.gender && (
-                      <div className="text-danger small mt-1">
-                        {errors.gender}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* City */}
-                  <div className="col-12">
-                    <label htmlFor="city" className="form-label">
-                      City
-                    </label>
-                    <input
-                      type="text"
-                      id="city"
-                      name="city"
-                      className={fieldClass("city")}
-                      placeholder="e.g. Botad"
-                      value={form.city}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                    {errors.city && (
-                      <div className="invalid-feedback">{errors.city}</div>
-                    )}
-                  </div>
-
                   {/* Password */}
-                  <div className="col-md-6">
+                  <div className="col-12">
                     <label htmlFor="password" className="form-label">
                       Password
                     </label>
-                    <input
-                      type="password"
-                      id="password"
-                      name="password"
-                      className={fieldClass("password")}
-                      placeholder="At least 8 characters"
-                      value={form.password}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
+                    <div className="input-wrapper">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        id="password"
+                        name="password"
+                        className={fieldClass("password")}
+                        placeholder="At least 6 characters"
+                        value={form.password}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <button
+                        type="button"
+                        className="btn-toggle-password"
+                        onClick={() => setShowPassword(!showPassword)}
+                        aria-label={showPassword ? "Hide password" : "Show password"}
+                      >
+                        {showPassword ? "👁️" : "👁️‍🗨️"}
+                      </button>
+                    </div>
                     {errors.password && (
                       <div className="invalid-feedback">{errors.password}</div>
                     )}
                   </div>
 
                   {/* Confirm Password */}
-                  <div className="col-md-6">
+                  <div className="col-12">
                     <label htmlFor="confirmPassword" className="form-label">
                       Confirm Password
                     </label>
-                    <input
-                      type="password"
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      className={fieldClass("confirmPassword")}
-                      placeholder="Re-enter password"
-                      value={form.confirmPassword}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
+                    <div className="input-wrapper">
+                      <input
+                        type={showConfirmPassword ? "text" : "password"}
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        className={fieldClass("confirmPassword")}
+                        placeholder="Re-enter your password"
+                        value={form.confirmPassword}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <button
+                        type="button"
+                        className="btn-toggle-password"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                      >
+                        {showConfirmPassword ? "👁️" : "👁️‍🗨️"}
+                      </button>
+                    </div>
                     {errors.confirmPassword && (
                       <div className="invalid-feedback">
                         {errors.confirmPassword}
@@ -377,47 +257,24 @@ const Register = () => {
                     )}
                   </div>
 
-                  {/* Terms */}
-                  <div className="col-12">
-                    <div className="form-check">
-                      <input
-                        className={
-                          "form-check-input" +
-                          (errors.terms ? " is-invalid" : "")
-                        }
-                        type="checkbox"
-                        id="terms"
-                        name="terms"
-                        checked={form.terms}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                      />
-                      <label className="form-check-label" htmlFor="terms">
-                        I agree to the Terms &amp; Conditions and Privacy Policy.
-                      </label>
-                      {errors.terms && (
-                        <div className="text-danger small mt-1">
-                          {errors.terms}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Submit */}
+                  {/* Submit Button */}
                   <div className="col-12 mt-4">
                     <button
                       type="submit"
                       className="btn btn-gold btn-lg w-100"
                       disabled={submitting}
                     >
-                      {submitting ? "Registering..." : "Register as Donor"}
+                      {submitting ? "Creating Account..." : "Register"}
                     </button>
                   </div>
 
-                  <div className="col-12 text-center mt-2">
+                  {/* Switch to Login */}
+                  <div className="col-12 text-center mt-3">
                     <p className="mb-0 text-muted">
-                      Already have an account? Contact support to access your
-                      account.
+                      Already have an account?{" "}
+                      <Link to="/login" className="fw-semibold">
+                        Log In
+                      </Link>
                     </p>
                   </div>
                 </div>

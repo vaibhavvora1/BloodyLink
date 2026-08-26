@@ -1,0 +1,365 @@
+/* ===================== BloodLink Premium Notification / Toast Styles ===================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap");
+@import "react-toastify/dist/ReactToastify.css";
+
+:root {
+  --bl-toast-bg: #ffffff;
+  --bl-toast-border: #e8e4dc;
+  --bl-toast-text: #1a1a1a;
+  --bl-toast-muted: #66635f;
+  --bl-toast-gold: #b8860b;
+  --bl-toast-red: #b3161b;
+  --bl-toast-green: #198754;
+  --bl-toast-blue: #0d6efd;
+  --bl-toast-amber: #d97706;
+}
+
+/* ===== Toast Container Custom Positioning ===== */
+.Toastify__toast-container {
+  width: 400px;
+  max-width: 90vw;
+  padding: 1rem;
+  z-index: 999999;
+}
+
+.Toastify__toast-container--top-right {
+  top: 1.25rem;
+  right: 1.25rem;
+}
+
+/* ===== Toast Card Base ===== */
+.Toastify__toast {
+  font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bl-toast-bg) !important;
+  color: var(--bl-toast-text) !important;
+  border: 1px solid var(--bl-toast-border) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.03) !important;
+  padding: 0 !important;
+  margin-bottom: 0.85rem !important;
+  min-height: 72px !important;
+  overflow: hidden !important;
+  cursor: default !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.Toastify__toast:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 42px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+}
+
+.Toastify__toast-body {
+  padding: 1rem 1.15rem !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: flex-start !important;
+}
+
+/* Hide default Toastify close button & icon */
+.Toastify__close-button {
+  display: none !important;
+}
+
+.Toastify__toast-icon {
+  display: none !important;
+}
+
+/* ===== Custom Toast Body Structure ===== */
+.bl-toast-wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  width: 100%;
+}
+
+.bl-toast-icon-box {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  margin-top: 0.1rem;
+  transition: transform 0.2s ease;
+}
+
+/* Type Specific Icon Accents */
+.bl-toast-success .bl-toast-icon-box {
+  background: rgba(25, 135, 84, 0.1);
+  color: var(--bl-toast-green);
+  border: 1px solid rgba(25, 135, 84, 0.2);
+}
+
+.bl-toast-error .bl-toast-icon-box {
+  background: rgba(179, 22, 27, 0.1);
+  color: var(--bl-toast-red);
+  border: 1px solid rgba(179, 22, 27, 0.2);
+}
+
+.bl-toast-warning .bl-toast-icon-box {
+  background: rgba(217, 119, 6, 0.1);
+  color: var(--bl-toast-amber);
+  border: 1px solid rgba(217, 119, 6, 0.25);
+}
+
+.bl-toast-info .bl-toast-icon-box {
+  background: rgba(184, 134, 11, 0.1);
+  color: var(--bl-toast-gold);
+  border: 1px solid rgba(184, 134, 11, 0.25);
+}
+
+.bl-toast-loading .bl-toast-icon-box {
+  background: rgba(184, 134, 11, 0.12);
+  color: var(--bl-toast-gold);
+  border: 1px solid rgba(184, 134, 11, 0.25);
+}
+
+/* Spinner Animation for Loading */
+.bl-toast-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(184, 134, 11, 0.3);
+  border-top-color: var(--bl-toast-gold);
+  border-radius: 50%;
+  animation: blToastSpin 0.75s linear infinite;
+}
+
+@keyframes blToastSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.bl-toast-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.bl-toast-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--bl-toast-text);
+  margin-bottom: 0.2rem;
+  line-height: 1.3;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.bl-toast-message {
+  font-size: 0.86rem;
+  color: var(--bl-toast-muted);
+  line-height: 1.45;
+  margin: 0;
+  word-break: break-word;
+}
+
+/* Close Button */
+.bl-toast-close-btn {
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  color: #9e9a93;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 0.35rem;
+  margin-top: -0.15rem;
+  transition: all 0.2s ease;
+  font-size: 1.1rem;
+}
+
+.bl-toast-close-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--bl-toast-text);
+}
+
+.bl-toast-close-btn:focus-visible {
+  outline: 2px solid var(--bl-toast-gold);
+  outline-offset: 1px;
+}
+
+/* ===== Progress Bar Custom Colors ===== */
+.Toastify__progress-bar {
+  height: 3px !important;
+  opacity: 0.85 !important;
+  border-radius: 0 0 16px 16px !important;
+}
+
+.Toastify__progress-bar--success {
+  background: linear-gradient(90deg, var(--bl-toast-green), #20c997) !important;
+}
+
+.Toastify__progress-bar--error {
+  background: linear-gradient(90deg, var(--bl-toast-red), #e63946) !important;
+}
+
+.Toastify__progress-bar--warning {
+  background: linear-gradient(90deg, var(--bl-toast-amber), #f59e0b) !important;
+}
+
+.Toastify__progress-bar--info {
+  background: linear-gradient(90deg, #d4af37, var(--bl-toast-gold)) !important;
+}
+
+.Toastify__progress-bar--default {
+  background: linear-gradient(90deg, #d4af37, var(--bl-toast-gold)) !important;
+}
+
+/* ===== Entrance / Exit Animations (Smooth Slide + Fade) ===== */
+@keyframes blToastEnter {
+  from {
+    opacity: 0;
+    transform: translate3d(24px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes blToastExit {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    opacity: 0;
+    transform: translate3d(24px, 0, 0);
+  }
+}
+
+.Toastify__slide-enter--top-right {
+  animation: blToastEnter 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+.Toastify__slide-exit--top-right {
+  animation: blToastExit 0.22s ease-in forwards !important;
+}
+
+/* ===== Notification Demo Page Styles ===== */
+.notif-demo-page {
+  background: var(--bl-bg, #faf9f7);
+  font-family: "DM Sans", sans-serif;
+  color: var(--bl-text, #1a1a1a);
+  min-height: 100vh;
+  padding: 3.5rem 0 5rem;
+}
+
+.notif-demo-card {
+  background: #ffffff;
+  border: 1px solid var(--bl-toast-border);
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.04);
+}
+
+.notif-demo-card h1 {
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 700;
+  font-size: 2.5rem;
+}
+
+.btn-toast-trigger {
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 0.65rem 1.25rem;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1.5px solid transparent;
+}
+
+.btn-trigger-success {
+  background: rgba(25, 135, 84, 0.08);
+  color: #198754;
+  border-color: rgba(25, 135, 84, 0.3);
+}
+
+.btn-trigger-success:hover {
+  background: #198754;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(25, 135, 84, 0.25);
+}
+
+.btn-trigger-error {
+  background: rgba(179, 22, 27, 0.08);
+  color: #b3161b;
+  border-color: rgba(179, 22, 27, 0.3);
+}
+
+.btn-trigger-error:hover {
+  background: #b3161b;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(179, 22, 27, 0.25);
+}
+
+.btn-trigger-warning {
+  background: rgba(217, 119, 6, 0.08);
+  color: #d97706;
+  border-color: rgba(217, 119, 6, 0.3);
+}
+
+.btn-trigger-warning:hover {
+  background: #d97706;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(217, 119, 6, 0.25);
+}
+
+.btn-trigger-info {
+  background: rgba(184, 134, 11, 0.08);
+  color: #b8860b;
+  border-color: rgba(184, 134, 11, 0.3);
+}
+
+.btn-trigger-info:hover {
+  background: #b8860b;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(184, 134, 11, 0.25);
+}
+
+.btn-trigger-loading {
+  background: #f4f2ee;
+  color: #3b3936;
+  border-color: #e5e1d8;
+}
+
+.btn-trigger-loading:hover {
+  background: #3b3936;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== Responsive Toast Card on Mobile ===== */
+@media (max-width: 575px) {
+  .Toastify__toast-container {
+    width: calc(100vw - 24px) !important;
+    left: 12px !important;
+    right: 12px !important;
+    top: 12px !important;
+    padding: 0 !important;
+  }
+
+  .Toastify__toast {
+    border-radius: 14px !important;
+    margin-bottom: 0.65rem !important;
+  }
+
+  .notif-demo-card {
+    padding: 1.75rem 1.25rem;
+  }
+}

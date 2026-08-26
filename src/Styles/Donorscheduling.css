@@ -1,0 +1,275 @@
+/* ===================== Bloolink Donor Scheduling — Light Theme ===================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap");
+
+:root {
+  --bl-bg: #faf9f7;
+  --bl-bg-alt: #f2f0ec;
+  --bl-card: #ffffff;
+  --bl-border: #e5e1d8;
+  --bl-red: #b3161b;
+  --bl-gold: #b8860b;
+  --bl-gold-soft: #d4af37;
+  --bl-text: #1a1a1a;
+  --bl-text-muted: #6b6b6b;
+}
+
+.scheduling-page {
+  background: var(--bl-bg);
+  font-family: "DM Sans", sans-serif;
+  color: var(--bl-text);
+  min-height: 100vh;
+}
+
+.text-gold {
+  color: var(--bl-gold);
+}
+
+h2, h3, h6 {
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 600;
+}
+
+.scheduling-badge {
+  background: rgba(179, 22, 27, 0.08);
+  color: var(--bl-red);
+  border: 1px solid rgba(179, 22, 27, 0.3);
+  font-weight: 500;
+  font-size: 0.78rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 50px;
+}
+
+/* ===== Eligibility banner ===== */
+.eligibility-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--bl-border);
+}
+
+.eligibility-banner.eligible {
+  background: rgba(46, 204, 113, 0.06);
+  border-color: rgba(46, 204, 113, 0.3);
+}
+
+.eligibility-banner.not-eligible {
+  background: rgba(255, 159, 28, 0.08);
+  border-color: rgba(255, 159, 28, 0.35);
+}
+
+/* ===== Cards ===== */
+.scheduling-card {
+  background: var(--bl-card);
+  border: 1px solid var(--bl-border);
+  border-radius: 14px;
+  padding: 1.5rem;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.04);
+}
+
+.section-label {
+  color: var(--bl-gold);
+  font-size: 1.05rem;
+  margin-bottom: 1rem;
+}
+
+.scheduling-fieldset:disabled .scheduling-card {
+  opacity: 0.55;
+}
+
+/* ===== Center options ===== */
+.center-option {
+  text-align: left;
+  background: var(--bl-bg);
+  border: 1px solid var(--bl-border);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.center-option:hover {
+  border-color: var(--bl-gold);
+}
+
+.center-option.selected {
+  border-color: var(--bl-gold);
+  background: rgba(184, 134, 11, 0.06);
+}
+
+.center-name {
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--bl-text);
+}
+
+.center-address {
+  font-size: 0.78rem;
+  color: var(--bl-text-muted);
+}
+
+/* ===== Date scroller ===== */
+.date-scroll {
+  display: flex;
+  gap: 0.6rem;
+  overflow-x: auto;
+  padding-bottom: 0.4rem;
+}
+
+.date-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 64px;
+  background: var(--bl-bg);
+  border: 1px solid var(--bl-border);
+  border-radius: 10px;
+  padding: 0.6rem 0.5rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  flex-shrink: 0;
+}
+
+.date-chip:hover {
+  border-color: var(--bl-gold);
+}
+
+.date-chip.selected {
+  border-color: var(--bl-gold);
+  background: rgba(184, 134, 11, 0.08);
+}
+
+.date-day {
+  font-size: 0.7rem;
+  color: var(--bl-text-muted);
+  text-transform: uppercase;
+}
+
+.date-num {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--bl-text);
+  line-height: 1.1;
+}
+
+.date-month {
+  font-size: 0.7rem;
+  color: var(--bl-text-muted);
+}
+
+/* ===== Time slots ===== */
+.slot-option {
+  position: relative;
+  background: var(--bl-bg);
+  border: 1px solid var(--bl-border);
+  border-radius: 10px;
+  padding: 0.65rem 0.75rem;
+  font-size: 0.85rem;
+  color: var(--bl-text);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.slot-option:hover:not(.booked) {
+  border-color: var(--bl-gold);
+}
+
+.slot-option.selected {
+  border-color: var(--bl-gold);
+  background: rgba(184, 134, 11, 0.08);
+  font-weight: 600;
+}
+
+.slot-option.booked {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--bl-bg-alt);
+}
+
+.slot-full-tag {
+  display: block;
+  font-size: 0.68rem;
+  color: var(--bl-red);
+  margin-top: 0.15rem;
+}
+
+/* ===== Notes textarea ===== */
+.form-control {
+  background: var(--bl-bg);
+  border: 1px solid var(--bl-border);
+  color: var(--bl-text);
+  border-radius: 8px;
+}
+
+.form-control:focus {
+  background: var(--bl-card);
+  border-color: var(--bl-gold);
+  box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.15);
+  color: var(--bl-text);
+}
+
+/* ===== Summary ===== */
+.summary-card {
+  background: var(--bl-bg-alt);
+}
+
+/* ===== Buttons ===== */
+.btn-gold {
+  background: linear-gradient(135deg, var(--bl-gold-soft), var(--bl-gold));
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-gold:hover:not(:disabled) {
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(184, 134, 11, 0.28);
+}
+
+.btn-gold:disabled {
+  opacity: 0.7;
+}
+
+.btn-outline-gold {
+  border: 1px solid var(--bl-gold);
+  color: var(--bl-gold);
+  background: transparent;
+  font-weight: 500;
+}
+
+.btn-outline-gold:hover {
+  background: var(--bl-gold);
+  color: #fff;
+}
+
+/* ===== Confirmation screen ===== */
+.confirm-card {
+  background: var(--bl-card);
+  border: 1px solid var(--bl-border);
+  border-radius: 16px;
+  padding: 2.5rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+}
+
+.confirm-icon {
+  font-size: 2.5rem;
+}
+
+.confirm-details {
+  background: var(--bl-bg-alt);
+  border: 1px solid var(--bl-border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+}
+
+@media (max-width: 575px) {
+  .scheduling-card,
+  .confirm-card {
+    padding: 1.25rem;
+  }
+}

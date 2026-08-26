@@ -68,6 +68,16 @@ const Navbar = () => {
               </NavLink>
             </li>
             <li className="nav-item">
+              <NavLink
+                className={({ isActive }) =>
+                  "nav-link" + (isActive ? " active" : "")
+                }
+                to="/login"
+              >
+                Login
+              </NavLink>
+            </li>
+            <li className="nav-item">
               <Link to="/register" className="btn btn-gold btn-sm px-3">
                 Register
               </Link>

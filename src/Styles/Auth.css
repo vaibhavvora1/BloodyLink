@@ -1,0 +1,211 @@
+/* ===================== Bloodlink Auth (Login & Register) Styles ===================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap");
+
+:root {
+  --bl-bg: #faf9f7;
+  --bl-card: #ffffff;
+  --bl-border: #e5e1d8;
+  --bl-red: #b3161b;
+  --bl-gold: #b8860b;
+  --bl-gold-soft: #d4af37;
+  --bl-text: #1a1a1a;
+  --bl-text-muted: #6b6b6b;
+}
+
+.auth-page {
+  background: radial-gradient(circle at top, rgba(184, 134, 11, 0.05), transparent 60%),
+              radial-gradient(circle at bottom right, rgba(179, 22, 27, 0.04), transparent 50%),
+              var(--bl-bg);
+  font-family: "DM Sans", sans-serif;
+  color: var(--bl-text);
+  min-height: calc(100vh - 70px);
+  display: flex;
+  align-items: center;
+  padding: 3rem 1rem;
+}
+
+.text-gold {
+  color: var(--bl-gold);
+}
+
+.auth-card {
+  background: var(--bl-card);
+  border: 1px solid var(--bl-border);
+  border-radius: 18px;
+  padding: 2.75rem 2.25rem;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.02);
+  transition: box-shadow 0.3s ease;
+}
+
+.auth-card:hover {
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.auth-card h2 {
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 700;
+  font-size: 2.2rem;
+  color: var(--bl-text);
+}
+
+.auth-subtitle {
+  color: var(--bl-text-muted);
+  font-size: 0.98rem;
+}
+
+.form-label {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--bl-text);
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.01em;
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.form-control {
+  background: var(--bl-bg);
+  border: 1.5px solid var(--bl-border);
+  color: var(--bl-text);
+  padding: 0.68rem 1rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus {
+  background: #ffffff;
+  border-color: var(--bl-gold);
+  box-shadow: 0 0 0 3.5px rgba(184, 134, 11, 0.18);
+  color: var(--bl-text);
+}
+
+.form-control::placeholder {
+  color: #a39f97;
+}
+
+.form-control.is-invalid {
+  border-color: var(--bl-red);
+  background-image: none;
+}
+
+.form-control.is-invalid:focus {
+  box-shadow: 0 0 0 3.5px rgba(179, 22, 27, 0.18);
+}
+
+.invalid-feedback {
+  color: var(--bl-red);
+  font-size: 0.82rem;
+  margin-top: 0.35rem;
+  font-weight: 500;
+  display: block;
+}
+
+.btn-toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--bl-text-muted);
+  padding: 4px 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  transition: color 0.2s ease;
+  z-index: 5;
+}
+
+.btn-toggle-password:hover {
+  color: var(--bl-gold);
+}
+
+.form-check-input:checked {
+  background-color: var(--bl-gold);
+  border-color: var(--bl-gold);
+}
+
+.form-check-input:focus {
+  box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.18);
+}
+
+.form-check-label {
+  font-size: 0.9rem;
+  color: var(--bl-text-muted);
+}
+
+.btn-gold {
+  background: linear-gradient(135deg, var(--bl-gold-soft), var(--bl-gold));
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.btn-gold:hover:not(:disabled) {
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(184, 134, 11, 0.28);
+}
+
+.btn-gold:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.auth-card a {
+  color: var(--bl-gold);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.auth-card a:hover {
+  color: #8c6608;
+  text-decoration: underline;
+}
+
+.alert-danger {
+  background: rgba(179, 22, 27, 0.08);
+  border: 1px solid rgba(179, 22, 27, 0.25);
+  color: var(--bl-red);
+  border-radius: 10px;
+  font-size: 0.92rem;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: var(--bl-text-muted);
+  margin: 1.5rem 0;
+  font-size: 0.85rem;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid var(--bl-border);
+}
+
+.auth-divider span {
+  padding: 0 0.75rem;
+}
+
+@media (max-width: 575px) {
+  .auth-card {
+    padding: 2rem 1.25rem;
+    border-radius: 14px;
+  }
+
+  .auth-card h2 {
+    font-size: 1.8rem;
+  }
+}

@@ -1,4 +1,5 @@
 import "bootstrap/dist/css/bootstrap.min.css";
+import { Link } from "react-router-dom";
 import "../Styles/DonorHome.css";
 
 const DonorHome = () => {
@@ -17,9 +18,12 @@ const DonorHome = () => {
                 3 lives. Check your eligibility and find a request near you today.
               </p>
               <div className="d-flex flex-wrap gap-3 mt-4">
-                <a href="#requests" className="btn btn-gold btn-lg px-4">
+                <Link to="/donorrequest" className="btn btn-gold btn-lg px-4">
                   Donate Now
-                </a>
+                </Link>
+                <Link to="/schedule" className="btn btn-outline-gold btn-lg px-4">
+                  Schedule a Donation
+                </Link>
                 <a href="#history" className="btn btn-outline-light btn-lg px-4">
                   View My History
                 </a>
