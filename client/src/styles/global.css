@@ -1,0 +1,122 @@
+@import './variables.css';
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+h1 { font-size: 28px; }
+h2 { font-size: 22px; font-weight: 600; }
+h3 { font-size: 18px; font-weight: 600; }
+small { font-size: 14px; color: var(--color-text-muted); }
+
+.app-container {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* Glass Navbar */
+.glass-navbar {
+  background-color: var(--color-surface-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border);
+  transition: all 200ms ease;
+}
+
+/* Premium Card */
+.premium-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.premium-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Buttons */
+.btn-blood-primary {
+  background: var(--gradient-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 10px 22px;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.btn-blood-primary:hover, .btn-blood-primary:focus {
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+}
+
+.btn-blood-secondary {
+  background-color: transparent;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  padding: 10px 22px;
+  font-weight: 600;
+  transition: all 150ms ease;
+}
+
+.btn-blood-secondary:hover {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary-dark);
+}
+
+/* Badges */
+.blood-badge {
+  display: inline-block;
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  font-weight: 700;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+.gold-accent {
+  color: var(--color-accent);
+}
+
+.bg-hero-radial {
+  background: var(--gradient-hero);
+}
+
+/* Reduced Motion Override */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .premium-card:hover {
+    transform: none !important;
+  }
+}

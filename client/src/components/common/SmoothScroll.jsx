@@ -1,0 +1,31 @@
+import React, { useEffect } from 'react';
+import Lenis from 'lenis';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
+
+export default function SmoothScroll({ children }) {
+  const shouldReduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    if (shouldReduceMotion) return;
+
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true
+    });
+
+    let frameId;
+    function raf(time) {
+      lenis.raf(time);
+      frameId = requestAnimationFrame(raf);
+    }
+    frameId = requestAnimationFrame(raf);
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      lenis.destroy();
+    };
+  }, [shouldReduceMotion]);
+
+  return <>{children}</>;
+}
