@@ -3,27 +3,38 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthContext';
-import api from '../../services/api';
 import FormInput from '../../components/forms/FormInput';
 import PasswordInput from '../../components/forms/PasswordInput';
 import BloodGroupSelect from '../../components/forms/BloodGroupSelect';
 
+const initialForm = {
+  name: '', email: '', password: '', role: 'donor', bloodGroup: 'O+',
+  city: '', phone: '', age: 25, gender: 'female', hospital: ''
+};
+
 export default function RegisterPage() {
-  const [formData, setFormData] = useState({
-    name: '', email: '', password: '', role: 'donor', bloodGroup: 'O+', city: '', phone: ''
-  });
+  const [formData, setFormData] = useState(initialForm);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const { loginUser } = useAuth();
+  const { register } = useAuth();
   const navigate = useNavigate();
 
   const validate = () => {
     const errs = {};
     if (!formData.name.trim()) errs.name = 'Full name is required.';
     if (!formData.email || !/^\S+@\S+\.\S+$/.test(formData.email)) errs.email = 'Valid email is required.';
-    if (!formData.password || formData.password.length < 6) errs.password = 'Minimum 6 characters.';
+    const pw = formData.password;
+    if (!pw || pw.length < 8 || !/[a-z]/.test(pw) || !/[A-Z]/.test(pw) || !/\d/.test(pw) || !/[^A-Za-z0-9]/.test(pw)) {
+      errs.password = 'Min 8 chars with upper, lower, number, and symbol.';
+    }
     if (!formData.city.trim()) errs.city = 'City is required.';
-    if (!formData.phone || !/^\d{10}$/.test(formData.phone.replace(/\D/g, ''))) errs.phone = 'Valid 10-digit phone required.';
+    if (!formData.phone || !/^\+?[0-9 ()-]{7,20}$/.test(formData.phone)) errs.phone = 'Valid phone number required.';
+    if (formData.role === 'donor') {
+      const ageNum = Number(formData.age);
+      if (!ageNum || ageNum < 18 || ageNum > 100) errs.age = 'Age must be 18-100.';
+    } else if (!formData.hospital.trim()) {
+      errs.hospital = 'Hospital name is required.';
+    }
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -33,12 +44,16 @@ export default function RegisterPage() {
     if (!validate() || loading) return;
     try {
       setLoading(true);
-      const res = await api.register(formData);
-      loginUser(res.data);
+      const payload = { ...formData };
+      if (formData.role === 'donor') delete payload.hospital;
+      else { delete payload.age; delete payload.gender; }
+      delete payload.role;
+
+      const res = await register(formData.role, payload);
       toast.success('Registration successful!');
-      navigate(formData.role === 'patient' ? '/patient/dashboard' : '/donor/schedule', { replace: true });
-    } catch {
-      toast.error('Registration failed.');
+      navigate(formData.role === 'patient' ? '/patient/dashboard' : '/donor/dashboard', { replace: true });
+    } catch (err) {
+      toast.error(err.response?.data?.message || err.message || 'Registration failed.');
     } finally {
       setLoading(false);
     }
@@ -46,10 +61,10 @@ export default function RegisterPage() {
 
   return (
     <div className="container app-container py-5">
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="premium-card mx-auto p-4" style={{ maxWidth: '480px' }}>
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="premium-card mx-auto p-4" style={{ maxWidth: '500px' }}>
         <div className="text-center mb-4">
           <h1 className="h3 fw-bold mb-1">Create an Account</h1>
-          <p className="text-muted small">Join Bloodlink as a donor or patient</p>
+          <p className="text-muted small">Join Bloodlink to save lives or request urgent blood</p>
         </div>
         <form onSubmit={handleSubmit} noValidate>
           <div className="mb-3">
@@ -62,7 +77,7 @@ export default function RegisterPage() {
                   className={`btn btn-sm ${formData.role === r ? 'btn-danger' : 'btn-outline-secondary'} text-capitalize`}
                   onClick={() => setFormData({ ...formData, role: r })}
                 >
-                  <i className={`bi ${r === 'donor' ? 'bi-heart-fill' : 'bi-person-fill'} me-1`}></i>
+                  <i className={`bi ${r === 'donor' ? 'bi-heart-fill' : 'bi-hospital-fill'} me-1`}></i>
                   {r === 'donor' ? 'Blood Donor' : 'Patient'}
                 </button>
               ))}
@@ -81,15 +96,33 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          <FormInput label="Phone Number" name="phone" type="tel" placeholder="9876543210" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} error={errors.phone} icon="bi-telephone-fill" required />
-          <PasswordInput label="Create Password" name="password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} error={errors.password} required />
+          {formData.role === 'donor' ? (
+            <div className="row g-2">
+              <div className="col-6">
+                <FormInput label="Age" name="age" type="number" min="18" max="100" value={formData.age} onChange={(e) => setFormData({ ...formData, age: e.target.value })} error={errors.age} required />
+              </div>
+              <div className="col-6">
+                <label className="form-label small fw-semibold text-dark mb-1">Gender</label>
+                <select className="form-select form-select-sm" value={formData.gender} onChange={(e) => setFormData({ ...formData, gender: e.target.value })}>
+                  <option value="female">Female</option>
+                  <option value="male">Male</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+          ) : (
+            <FormInput label="Hospital" name="hospital" placeholder="e.g. City General Hospital" value={formData.hospital} onChange={(e) => setFormData({ ...formData, hospital: e.target.value })} error={errors.hospital} required />
+          )}
+
+          <FormInput label="Phone Number" name="phone" type="tel" placeholder="+91 9876543210" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} error={errors.phone} icon="bi-telephone-fill" required />
+          <PasswordInput label="Create Password" name="password" placeholder="Min 8 chars (Aa1#)" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} error={errors.password} required />
 
           <button type="submit" className="btn btn-blood-primary w-100 py-2 d-flex align-items-center justify-content-center gap-2 mt-3" disabled={loading}>
             {loading ? <span className="spinner-border spinner-border-sm" role="status"></span> : null}
             <span>{loading ? 'Creating Account...' : 'Complete Registration'}</span>
           </button>
         </form>
-        <div className="text-center mt-4 pt-3 border-top">
+        <div className="text-center mt-3 pt-2 border-top">
           <span className="small text-muted">Already registered? </span>
           <Link to="/login" className="small text-danger fw-bold text-decoration-none">Sign In</Link>
         </div>

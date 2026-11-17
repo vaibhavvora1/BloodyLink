@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /portal-x7k2
+Disallow: /admin/

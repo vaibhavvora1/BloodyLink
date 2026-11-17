@@ -15,12 +15,16 @@ import NotFoundPage from './pages/public/NotFoundPage';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
-import PatientDashboard from './pages/patient/PatientDashboard';
-import BloodRequestPage from './pages/patient/BloodRequestPage';
+import AdminLoginPage from './pages/auth/AdminLoginPage';
+import DonorDashboard from './pages/donor/DonorDashboard';
 import DonorSchedulingPage from './pages/donor/DonorSchedulingPage';
 import DonationRequestsPage from './pages/donor/DonationRequestsPage';
+import PatientDashboard from './pages/patient/PatientDashboard';
+import BloodRequestPage from './pages/patient/BloodRequestPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import BloodStock from './pages/admin/BloodStock';
+
+const adminLoginPath = import.meta.env.VITE_ADMIN_LOGIN_PATH || '/portal-x7k2';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -42,12 +46,14 @@ function AnimatedRoutes() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path={adminLoginPath} element={<AdminLoginPage />} />
 
-          <Route path="/patient/dashboard" element={<ProtectedRoute allowedRoles={['patient', 'admin']}><PatientDashboard /></ProtectedRoute>} />
-          <Route path="/patient/request" element={<ProtectedRoute allowedRoles={['patient', 'admin']}><BloodRequestPage /></ProtectedRoute>} />
+          <Route path="/donor/dashboard" element={<ProtectedRoute allowedRoles={['donor']}><DonorDashboard /></ProtectedRoute>} />
+          <Route path="/donor/schedule" element={<ProtectedRoute allowedRoles={['donor']}><DonorSchedulingPage /></ProtectedRoute>} />
+          <Route path="/donor/requests" element={<ProtectedRoute allowedRoles={['donor']}><DonationRequestsPage /></ProtectedRoute>} />
 
-          <Route path="/donor/schedule" element={<ProtectedRoute allowedRoles={['donor', 'admin']}><DonorSchedulingPage /></ProtectedRoute>} />
-          <Route path="/donor/requests" element={<ProtectedRoute allowedRoles={['donor', 'admin']}><DonationRequestsPage /></ProtectedRoute>} />
+          <Route path="/patient/dashboard" element={<ProtectedRoute allowedRoles={['patient']}><PatientDashboard /></ProtectedRoute>} />
+          <Route path="/patient/request" element={<ProtectedRoute allowedRoles={['patient']}><BloodRequestPage /></ProtectedRoute>} />
 
           <Route path="/admin/dashboard" element={<ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>} />
           <Route path="/admin/blood-stock" element={<ProtectedRoute allowedRoles={['admin']}><BloodStock /></ProtectedRoute>} />

@@ -1,25 +1,39 @@
 import rateLimit from 'express-rate-limit';
 
-export const generalRateLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  message: {
-    success: false,
-    message: 'Too many requests, please try again later.',
-    data: null
-  },
+const createLimiter = (windowMs, limit, message) => rateLimit({
+  windowMs,
+  limit,
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  handler: (_req, res) => res.status(429).json({ success: false, message, data: null })
 });
 
-export const authRateLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 10,
-  message: {
-    success: false,
-    message: 'Too many login/register attempts. Please try again in 15 minutes.',
-    data: null
-  },
-  standardHeaders: true,
-  legacyHeaders: false
-});
+export const generalRateLimiter = createLimiter(
+  15 * 60 * 1000,
+  100,
+  'Too many requests. Please try again in 15 minutes.'
+);
+
+export const loginRateLimiter = createLimiter(
+  15 * 60 * 1000,
+  5,
+  'Too many login attempts. Please try again in 15 minutes.'
+);
+
+export const adminLoginRateLimiter = createLimiter(
+  15 * 60 * 1000,
+  3,
+  'Too many admin login attempts. Please try again in 15 minutes.'
+);
+
+export const registerRateLimiter = createLimiter(
+  60 * 60 * 1000,
+  5,
+  'Too many registration attempts. Please try again in one hour.'
+);
+
+export const refreshRateLimiter = createLimiter(
+  15 * 60 * 1000,
+  30,
+  'Too many refresh requests. Please try again in 15 minutes.'
+);

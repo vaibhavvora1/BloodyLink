@@ -1,4 +1,3 @@
-import { ZodError } from 'zod';
 import { env } from '../config/env.js';
 import { sendResponse } from '../utils/response.js';
 
@@ -7,13 +6,12 @@ export const notFoundHandler = (req, res) => {
 };
 
 export const errorHandler = (err, req, res, next) => {
-  let statusCode = err.statusCode || 500;
+  if (res.headersSent) return next(err);
+
+  let statusCode = err.statusCode || err.status || 500;
   let message = err.message || 'Internal server error';
 
-  if (err instanceof ZodError) {
-    statusCode = 400;
-    message = err.errors.map((e) => e.message).join(', ');
-  } else if (err.code === 11000) {
+  if (err.code === 11000) {
     statusCode = 409;
     const field = Object.keys(err.keyValue || {})[0] || 'field';
     message = `Duplicate value entered for ${field}`;
@@ -22,9 +20,9 @@ export const errorHandler = (err, req, res, next) => {
     message = 'Resource not found or invalid ID format';
   }
 
-  if (env.NODE_ENV === 'production' && statusCode === 500) {
+  if (env.NODE_ENV === 'production' && statusCode >= 500) {
     message = 'An unexpected server error occurred. Please try again.';
   }
-
+  if (statusCode >= 500) console.error(err);
   return sendResponse(res, statusCode, false, message);
 };

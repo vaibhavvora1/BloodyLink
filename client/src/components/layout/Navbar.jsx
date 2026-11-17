@@ -3,7 +3,7 @@ import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 export default function Navbar() {
-  const { user, isAuthenticated, logout, loginAs } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
   const toggle = () => setIsOpen(!isOpen);
@@ -34,6 +34,9 @@ export default function Navbar() {
 
             {user?.role === 'donor' && (
               <>
+                <li className="nav-item">
+                  <NavLink className="nav-link text-dark fw-medium" to="/donor/dashboard">Dashboard</NavLink>
+                </li>
                 <li className="nav-item">
                   <NavLink className="nav-link text-dark fw-medium" to="/donor/schedule">Schedule</NavLink>
                 </li>
@@ -80,13 +83,6 @@ export default function Navbar() {
               <div className="d-flex align-items-center gap-2">
                 <Link to="/login" className="btn btn-blood-secondary btn-sm">Login</Link>
                 <Link to="/register" className="btn btn-blood-primary btn-sm">Register</Link>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-outline-warning text-dark d-none d-md-block"
-                  onClick={() => loginAs('admin', 'Admin User')}
-                >
-                  <i className="bi bi-shield-lock-fill me-1"></i> Demo Admin
-                </button>
               </div>
             )}
           </div>

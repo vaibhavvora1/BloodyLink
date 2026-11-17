@@ -1,50 +1,57 @@
-import axios from 'axios';
-import { mockStats, mockDonors, mockRequests } from '../data/mockData';
+import apiClient from './apiClient';
 import { initialBloodStock } from '../data/bloodStock';
+import { mockDonors, mockRequests } from '../data/mockData';
 import { getStockStatus, isExpiringSoon } from '../utils/stockStatus';
 
-const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
-  withCredentials: true,
-  headers: { 'Content-Type': 'application/json' }
-});
-
-const delay = (ms = 350) => new Promise((resolve) => setTimeout(resolve, ms));
+const delay = (ms = 250) => new Promise((resolve) => setTimeout(resolve, ms));
 let localStock = [...initialBloodStock];
 let localRequests = [...mockRequests];
 
 export const api = {
-  async login(creds) {
-    await delay();
-    return {
-      success: true,
-      message: 'Login successful',
-      data: {
-        id: `usr-${Date.now()}`,
-        name: creds.email.split('@')[0],
-        email: creds.email,
-        role: creds.role || 'donor',
-        bloodGroup: 'O+',
-        city: 'Mumbai',
-        maskedPhone: '+91 98*** **123'
-      }
-    };
+  async login(role, creds) {
+    const res = await apiClient.post(`/auth/${role}/login`, creds);
+    return res.data;
   },
-
-  async register(u) {
-    await delay();
-    return {
-      success: true,
-      message: 'Account created',
-      data: { id: `usr-${Date.now()}`, ...u, maskedPhone: '+91 98*** **123' }
-    };
+  async register(role, data) {
+    const res = await apiClient.post(`/auth/${role}/register`, data);
+    return res.data;
   },
-
+  async refresh() {
+    const res = await apiClient.post('/auth/refresh');
+    return res.data;
+  },
+  async logout() {
+    const res = await apiClient.post('/auth/logout');
+    return res.data;
+  },
+  async getMe() {
+    const res = await apiClient.get('/auth/me');
+    return res.data;
+  },
+  async getDonorDashboard() {
+    const res = await apiClient.get('/donor/dashboard');
+    return res.data;
+  },
+  async getDonorProfile() {
+    const res = await apiClient.get('/donor/profile');
+    return res.data;
+  },
+  async updateDonorAvailability(isAvailable) {
+    const res = await apiClient.patch('/donor/availability', { isAvailable });
+    return res.data;
+  },
+  async getPatientDashboard() {
+    const res = await apiClient.get('/patient/dashboard');
+    return res.data;
+  },
+  async getAdminDashboard() {
+    const res = await apiClient.get('/admin/dashboard');
+    return res.data;
+  },
   async forgotPassword(email) {
     await delay();
-    return { success: true, message: `Instructions sent to ${email}` };
+    return { success: true, message: `Reset link sent to ${email}` };
   },
-
   async getDonors(filters = {}) {
     await delay();
     const data = mockDonors.filter((d) => {
@@ -54,12 +61,10 @@ export const api = {
     });
     return { success: true, data };
   },
-
   async getRequests() {
     await delay();
     return { success: true, data: localRequests };
   },
-
   async createBloodRequest(reqData) {
     await delay();
     const newReq = {
@@ -72,12 +77,10 @@ export const api = {
     localRequests.unshift(newReq);
     return { success: true, message: 'Emergency request registered', data: newReq };
   },
-
   async scheduleDonation(slotData) {
     await delay();
     return { success: true, message: 'Donation slot confirmed', data: slotData };
   },
-
   async getStockList(filters = {}) {
     await delay();
     let data = localStock.map((i) => ({ ...i, status: getStockStatus(i.units), isExpiring: isExpiringSoon(i.expiryDate) }));
@@ -89,7 +92,6 @@ export const api = {
     }
     return { success: true, data };
   },
-
   async getStockSummary() {
     await delay();
     const totalUnits = localStock.reduce((acc, curr) => acc + curr.units, 0);
@@ -98,30 +100,16 @@ export const api = {
     const expiringCount = localStock.filter((i) => isExpiringSoon(i.expiryDate)).length;
     return { success: true, data: { totalUnits, criticalCount, lowCount, expiringCount } };
   },
-
-  async getPublicStockAvailability() {
+  async addStock(item) {
     await delay();
-    const groups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
-    const summary = groups.map((g) => {
-      const units = localStock.filter((i) => i.bloodGroup === g).reduce((acc, curr) => acc + curr.units, 0);
-      return { bloodGroup: g, totalUnits: units, status: getStockStatus(units) };
-    });
-    return { success: true, data: summary };
+    const newItem = { id: `stk-${Date.now()}`, ...item, units: Number(item.units), lastUpdated: 'Just now' };
+    localStock.unshift(newItem);
+    return { success: true, message: 'Stock item added', data: newItem };
   },
-
-  async addStock(entry) {
+  async updateStock(id, newUnits) {
     await delay();
-    const item = { ...entry, id: `stk-${Date.now()}`, units: Number(entry.units), lastUpdated: new Date().toISOString() };
-    localStock.unshift(item);
-    return { success: true, message: 'Stock batch added', data: item };
-  },
-
-  async updateStock(id, units) {
-    await delay();
-    const idx = localStock.findIndex((i) => i.id === id);
-    if (idx === -1) throw { success: false, message: 'Item not found' };
-    localStock[idx] = { ...localStock[idx], units: Number(units), lastUpdated: new Date().toISOString() };
-    return { success: true, message: 'Units updated', data: localStock[idx] };
+    localStock = localStock.map((i) => (i.id === id ? { ...i, units: Number(newUnits), lastUpdated: 'Just now' } : i));
+    return { success: true, message: 'Stock units updated' };
   }
 };
 
