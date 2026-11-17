@@ -9,7 +9,7 @@ export const env = {
   PORT: Number(process.env.PORT || 5000),
   NODE_ENV: process.env.NODE_ENV || 'development',
   CLIENT_URL: process.env.CLIENT_URL || 'http://localhost:5173',
-  MONGO_URI: process.env.MONGO_URI || '',
+  MONGO_URI: process.env.MONGO_URI || process.env.MONGODB_URI || '',
   ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET || '',
   REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET || '',
   ADMIN_EMAIL: process.env.ADMIN_EMAIL || '',

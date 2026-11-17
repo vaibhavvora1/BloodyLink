@@ -30,7 +30,6 @@ export default function Footer() {
             <ul className="list-unstyled small d-flex flex-column gap-2 mb-0">
               <li><Link to="/donor/schedule" className="text-muted text-decoration-none">Donor Portal</Link></li>
               <li><Link to="/patient/dashboard" className="text-muted text-decoration-none">Patient Portal</Link></li>
-              <li><Link to="/admin/dashboard" className="text-muted text-decoration-none">Admin Area</Link></li>
             </ul>
           </div>
 

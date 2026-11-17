@@ -36,8 +36,28 @@ export const api = {
     const res = await apiClient.get('/donor/profile');
     return res.data;
   },
+  async updateDonorProfile(data) {
+    const res = await apiClient.put('/donor/profile', data);
+    return res.data;
+  },
   async updateDonorAvailability(isAvailable) {
     const res = await apiClient.patch('/donor/availability', { isAvailable });
+    return res.data;
+  },
+  async getDonorRequests() {
+    const res = await apiClient.get('/donor/requests');
+    return res.data;
+  },
+  async confirmDonation(id) {
+    const res = await apiClient.post(`/donor/requests/${id}/confirm`);
+    return res.data;
+  },
+  async getPatientProfile() {
+    const res = await apiClient.get('/patient/profile');
+    return res.data;
+  },
+  async updatePatientProfile(data) {
+    const res = await apiClient.put('/patient/profile', data);
     return res.data;
   },
   async getPatientDashboard() {
@@ -80,6 +100,17 @@ export const api = {
   async scheduleDonation(slotData) {
     await delay();
     return { success: true, message: 'Donation slot confirmed', data: slotData };
+  },
+  async getPublicStockAvailability() {
+    await delay();
+    const groups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+    const data = groups.map((bg) => {
+      const totalUnits = localStock
+        .filter((i) => i.bloodGroup === bg)
+        .reduce((sum, item) => sum + item.units, 0);
+      return { bloodGroup: bg, totalUnits, status: getStockStatus(totalUnits) };
+    });
+    return { success: true, data };
   },
   async getStockList(filters = {}) {
     await delay();

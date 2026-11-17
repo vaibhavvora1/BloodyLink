@@ -38,6 +38,9 @@ export default function Navbar() {
                   <NavLink className="nav-link text-dark fw-medium" to="/donor/dashboard">Dashboard</NavLink>
                 </li>
                 <li className="nav-item">
+                  <NavLink className="nav-link text-dark fw-medium" to="/donor/profile">My Profile</NavLink>
+                </li>
+                <li className="nav-item">
                   <NavLink className="nav-link text-dark fw-medium" to="/donor/schedule">Schedule</NavLink>
                 </li>
                 <li className="nav-item">
@@ -50,6 +53,9 @@ export default function Navbar() {
               <>
                 <li className="nav-item">
                   <NavLink className="nav-link text-dark fw-medium" to="/patient/dashboard">Dashboard</NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink className="nav-link text-dark fw-medium" to="/patient/profile">My Profile</NavLink>
                 </li>
                 <li className="nav-item">
                   <NavLink className="nav-link text-dark fw-medium" to="/patient/request">Request Blood</NavLink>

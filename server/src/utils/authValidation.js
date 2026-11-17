@@ -7,8 +7,26 @@ const password = z.string().min(8).max(128).refine((value) => /[a-z]/.test(value
   .refine((value) => /[^A-Za-z0-9]/.test(value), 'Password must include a symbol.');
 const phone = z.string().trim().regex(/^\+?[0-9 ()-]{7,20}$/, 'Enter a valid phone number.');
 const bloodGroup = z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']);
-const name = z.string().trim().min(2).max(100);
-const city = z.string().trim().min(2).max(100);
+const name = z.string().trim().min(2, 'Name must be at least 2 characters.').max(100);
+const city = z.string().trim().min(2, 'City must be at least 2 characters.').max(100);
+const gender = z.enum(['female', 'male', 'other', 'prefer_not_to_say']);
+
+const isValidDonorDOB = (val) => {
+  if (!val) return true;
+  const dob = new Date(val);
+  if (isNaN(dob.getTime()) || dob > new Date()) return false;
+  const now = new Date();
+  let years = now.getFullYear() - dob.getFullYear();
+  const m = now.getMonth() - dob.getMonth();
+  if (m < 0 || (m === 0 && now.getDate() < dob.getDate())) years--;
+  return years >= 18 && years <= 65;
+};
+
+const isNotFutureDate = (val) => {
+  if (!val) return true;
+  const d = new Date(val);
+  return !isNaN(d.getTime()) && d <= new Date();
+};
 
 export const donorRegisterSchema = z.object({
   name,
@@ -17,7 +35,7 @@ export const donorRegisterSchema = z.object({
   password,
   bloodGroup,
   age: z.coerce.number().int().min(18).max(100),
-  gender: z.enum(['female', 'male', 'other', 'prefer_not_to_say']),
+  gender,
   city,
   lastDonationDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Use YYYY-MM-DD for the last donation date.').optional().or(z.literal('')),
   isAvailable: z.boolean().optional()
@@ -43,4 +61,35 @@ export const donorAvailabilitySchema = z.object({ isAvailable: z.boolean() }).st
 export const donorSearchSchema = z.object({
   bloodGroup: bloodGroup.optional(),
   city: z.string().trim().max(100).optional()
+}).strict();
+
+export const donorProfileUpdateSchema = z.object({
+  name: name.optional(),
+  phone: phone.optional(),
+  city: city.optional(),
+  address: z.string().trim().max(200).optional().or(z.literal('')),
+  dateOfBirth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Use YYYY-MM-DD for date of birth.')
+    .refine(isValidDonorDOB, 'Donor must be between 18 and 65 years old and DOB cannot be in future.')
+    .optional().or(z.literal('')),
+  bloodGroup: bloodGroup.optional(),
+  gender: gender.optional(),
+  weight: z.coerce.number().min(45, 'Weight must be at least 45 kg for blood donation.').max(250).optional(),
+  lastDonationDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Use YYYY-MM-DD for last donation date.')
+    .refine(isNotFutureDate, 'Last donation date cannot be in the future.')
+    .optional().or(z.literal('')),
+  isAvailable: z.boolean().optional()
+}).strict();
+
+export const patientProfileUpdateSchema = z.object({
+  name: name.optional(),
+  phone: phone.optional(),
+  city: city.optional(),
+  address: z.string().trim().max(200).optional().or(z.literal('')),
+  dateOfBirth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Use YYYY-MM-DD for date of birth.')
+    .refine(isNotFutureDate, 'Date of birth cannot be in the future.')
+    .optional().or(z.literal('')),
+  bloodGroup: bloodGroup.optional(),
+  gender: gender.optional(),
+  hospital: z.string().trim().min(2, 'Hospital name is required.').max(150).optional(),
+  emergencyContact: z.string().trim().regex(/^\+?[0-9 ()-]{7,20}$/, 'Enter a valid emergency contact phone number.').optional().or(z.literal(''))
 }).strict();

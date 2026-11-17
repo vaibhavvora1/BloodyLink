@@ -4,6 +4,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'react-toastify/dist/ReactToastify.css';
 import './styles/global.css';
+import './styles/profile.css';
+import './styles/donationModal.css';
 import App from './App';
 
 ReactDOM.createRoot(document.getElementById('root')).render(

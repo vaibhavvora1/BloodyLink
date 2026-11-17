@@ -17,9 +17,11 @@ import RegisterPage from './pages/auth/RegisterPage';
 import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
 import AdminLoginPage from './pages/auth/AdminLoginPage';
 import DonorDashboard from './pages/donor/DonorDashboard';
+import DonorProfile from './pages/donor/DonorProfile';
 import DonorSchedulingPage from './pages/donor/DonorSchedulingPage';
 import DonationRequestsPage from './pages/donor/DonationRequestsPage';
 import PatientDashboard from './pages/patient/PatientDashboard';
+import PatientProfile from './pages/patient/PatientProfile';
 import BloodRequestPage from './pages/patient/BloodRequestPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import BloodStock from './pages/admin/BloodStock';
@@ -49,10 +51,12 @@ function AnimatedRoutes() {
           <Route path={adminLoginPath} element={<AdminLoginPage />} />
 
           <Route path="/donor/dashboard" element={<ProtectedRoute allowedRoles={['donor']}><DonorDashboard /></ProtectedRoute>} />
+          <Route path="/donor/profile" element={<ProtectedRoute allowedRoles={['donor']}><DonorProfile /></ProtectedRoute>} />
           <Route path="/donor/schedule" element={<ProtectedRoute allowedRoles={['donor']}><DonorSchedulingPage /></ProtectedRoute>} />
           <Route path="/donor/requests" element={<ProtectedRoute allowedRoles={['donor']}><DonationRequestsPage /></ProtectedRoute>} />
 
           <Route path="/patient/dashboard" element={<ProtectedRoute allowedRoles={['patient']}><PatientDashboard /></ProtectedRoute>} />
+          <Route path="/patient/profile" element={<ProtectedRoute allowedRoles={['patient']}><PatientProfile /></ProtectedRoute>} />
           <Route path="/patient/request" element={<ProtectedRoute allowedRoles={['patient']}><BloodRequestPage /></ProtectedRoute>} />
 
           <Route path="/admin/dashboard" element={<ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>} />
