@@ -31,8 +31,8 @@ export default function AdminLoginPage() {
 
     try {
       setLoading(true);
-      const res = await login('admin', formData);
-      toast.success(`Admin access granted. Welcome, ${res.user.name}.`);
+      await login('admin', formData);
+      toast.success('Admin access granted.');
       navigate('/admin/dashboard', { replace: true });
     } catch (err) {
       const msg = err.response?.data?.message || err.message || 'Invalid administrative credentials';
@@ -64,7 +64,7 @@ export default function AdminLoginPage() {
             label="Admin Email"
             name="email"
             type="email"
-            placeholder="admin@bloodlink.org"
+            placeholder="Admin email address"
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             error={errors.email}

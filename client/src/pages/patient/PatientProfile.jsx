@@ -6,9 +6,10 @@ import ProfileForm from '../../components/profile/ProfileForm';
 import StockSkeleton from '../../components/stock/StockSkeleton';
 
 const patientFieldsConfig = [
-  { name: 'name', label: 'Full Name', required: true, placeholder: 'Patient or Guardian Name' },
+  { name: 'name', label: 'Full Name', required: true, placeholder: 'Full name' },
   { name: 'email', label: 'Email Address', readOnly: true },
-  { name: 'phone', label: 'Phone Number', required: true, placeholder: '+91 9876543210' },
+  { name: 'phone', label: 'Phone Number', required: true, placeholder: 'Phone number' },
+  { name: 'age', label: 'Age', type: 'number', required: true, help: 'Enter the patient’s age in years.' },
   {
     name: 'bloodGroup',
     label: 'Blood Group Required',
@@ -20,6 +21,7 @@ const patientFieldsConfig = [
     name: 'gender',
     label: 'Gender',
     type: 'select',
+    required: true,
     options: [
       { value: 'female', label: 'Female' },
       { value: 'male', label: 'Male' },
@@ -28,10 +30,11 @@ const patientFieldsConfig = [
     ]
   },
   { name: 'dateOfBirth', label: 'Date of Birth', type: 'date' },
-  { name: 'hospital', label: 'Primary Admitted Hospital', required: true, placeholder: 'e.g. Lilavati Hospital' },
-  { name: 'emergencyContact', label: 'Emergency Contact Number', placeholder: '+91 9876543211' },
+  { name: 'hospital', label: 'Primary Hospital', required: true, placeholder: 'Hospital name' },
+  { name: 'emergencyContact', label: 'Emergency Contact Number', placeholder: 'Phone number' },
   { name: 'city', label: 'City', required: true, placeholder: 'City' },
-  { name: 'address', label: 'Residential Address', col: 'col-12', placeholder: 'Address details' }
+  { name: 'address', label: 'Address', col: 'col-12', placeholder: 'Address' },
+  { name: 'medicalNotes', label: 'Medical Notes', type: 'textarea', col: 'col-12', placeholder: 'Relevant medical notes' }
 ];
 
 export default function PatientProfile() {
@@ -50,15 +53,20 @@ export default function PatientProfile() {
   const validate = (formData) => {
     const errs = {};
     if (!formData.name?.trim()) errs.name = 'Full name is required.';
+    if (!formData.bloodGroup) errs.bloodGroup = 'Choose a blood group.';
+    if (!formData.gender) errs.gender = 'Choose a gender option.';
     if (!formData.phone || !/^\+?[0-9 ()-]{7,20}$/.test(formData.phone)) errs.phone = 'Valid phone number required.';
     if (!formData.city?.trim()) errs.city = 'City is required.';
     if (!formData.hospital?.trim()) errs.hospital = 'Hospital name is required.';
+    if (formData.age === '' || formData.age === undefined || !Number.isInteger(Number(formData.age)) || Number(formData.age) < 0 || Number(formData.age) > 120) errs.age = 'Enter an age from 0 to 120.';
     if (formData.dateOfBirth && new Date(formData.dateOfBirth) > new Date()) {
       errs.dateOfBirth = 'Date of birth cannot be in the future.';
     }
     if (formData.emergencyContact && !/^\+?[0-9 ()-]{7,20}$/.test(formData.emergencyContact)) {
       errs.emergencyContact = 'Valid emergency contact number required.';
     }
+    if (formData.address && formData.address.trim().length < 5) errs.address = 'Address should be at least 5 characters.';
+    if ((formData.medicalNotes || '').length > 1000) errs.medicalNotes = 'Medical notes must be 1,000 characters or fewer.';
     return { isValid: Object.keys(errs).length === 0, errs };
   };
 

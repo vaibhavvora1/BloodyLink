@@ -5,7 +5,7 @@ import { env } from '../config/env.js';
 import { sendResponse } from '../utils/response.js';
 import {
   INVALID_LOGIN_MESSAGE,
-  dummyPasswordHash,
+  fallbackPasswordHash,
   isSameHash,
   issueSession,
   setFailedLogin
@@ -28,10 +28,8 @@ export const register = (role) => asyncHandler(async (req, res) => {
   const details = { ...req.body };
   delete details.password;
   delete details.role;
-  if (details.lastDonationDate === '') delete details.lastDonationDate;
   const account = await Account.create({
     ...details,
-    ...(details.lastDonationDate ? { lastDonationDate: new Date(`${details.lastDonationDate}T00:00:00.000Z`) } : {}),
     passwordHash,
     role
   });
@@ -46,7 +44,7 @@ export const login = (role) => asyncHandler(async (req, res) => {
 
   const passwordMatches = account
     ? await bcrypt.compare(req.body.password, account.passwordHash)
-    : await bcrypt.compare(req.body.password, await dummyPasswordHash());
+    : await bcrypt.compare(req.body.password, await fallbackPasswordHash());
 
   const isLocked = account?.lockUntil && account.lockUntil.getTime() > Date.now();
   if (!account || isLocked || !passwordMatches) {

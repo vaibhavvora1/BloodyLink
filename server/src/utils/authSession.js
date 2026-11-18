@@ -7,13 +7,13 @@ export const INVALID_LOGIN_MESSAGE = 'Invalid email or password';
 export const LOCKOUT_ATTEMPTS = 5;
 export const LOCKOUT_DURATION_MS = 15 * 60 * 1000;
 
-let dummyPasswordHashPromise;
+let fallbackPasswordHashPromise;
 
 const cryptoRandomPassword = () => crypto.randomBytes(32).toString('hex');
 
-export const dummyPasswordHash = () => {
-  dummyPasswordHashPromise ||= bcrypt.hash(cryptoRandomPassword(), 12);
-  return dummyPasswordHashPromise;
+export const fallbackPasswordHash = () => {
+  fallbackPasswordHashPromise ||= bcrypt.hash(cryptoRandomPassword(), 12);
+  return fallbackPasswordHashPromise;
 };
 
 export const issueSession = async (account, res) => {

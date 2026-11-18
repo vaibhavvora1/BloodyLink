@@ -12,6 +12,10 @@ import authRoutes from './routes/auth.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 import patientRoutes from './routes/patient.routes.js';
 import donorRoutes from './routes/donor.routes.js';
+import publicRoutes from './routes/public.routes.js';
+import donationRoutes from './routes/donations.routes.js';
+import adminDonationRoutes from './routes/adminDonations.routes.js';
+import stockRoutes from './routes/stock.routes.js';
 
 const app = express();
 
@@ -27,7 +31,11 @@ app.use(hpp());
 app.use('/api', generalRateLimiter);
 
 app.use('/api/auth', authRoutes);
+app.use('/api/public', publicRoutes);
+app.use('/api/stock', stockRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/admin/donations', adminDonationRoutes);
+app.use('/api/donations', donationRoutes);
 app.use('/api/patient', patientRoutes);
 app.use('/api/donor', donorRoutes);
 

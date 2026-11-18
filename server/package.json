@@ -6,7 +6,10 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "seed:admin": "node scripts/seedAdmin.js"
+    "seed:admin": "node scripts/seedAdmin.js",
+    "seed:stock": "node scripts/seedBloodStock.js",
+    "migrate:stock": "node scripts/migrateBloodStock.js",
+    "verify:donations": "node scripts/verifyDonations.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",

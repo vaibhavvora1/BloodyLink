@@ -10,7 +10,7 @@ export default function BloodGroupCard({
   onRequest
 }) {
   const theme = getStatusTheme(status);
-  const fillPercentage = Math.min(100, Math.round(((units || (status === 'Available' ? 30 : status === 'Low' ? 15 : 5)) / 40) * 100));
+  const fillPercentage = Math.min(100, Math.round(((units || 0) / 40) * 100));
 
   return (
     <div className="premium-card h-100 d-flex flex-column justify-content-between p-3">
@@ -23,10 +23,10 @@ export default function BloodGroupCard({
         <div className="mb-3">
           <div className="d-flex justify-content-between align-items-baseline mb-1">
             <span className="text-muted small">
-              {isPublic ? 'Availability Level' : 'In Stock'}
+              {isPublic ? 'Available stock' : 'In Stock'}
             </span>
             <span className="fw-bold" style={{ color: theme.colorVar }}>
-              {isPublic ? status : `${units} Units`}
+              {`${units || 0} Units`}
             </span>
           </div>
           <div className="progress" style={{ height: '8px', backgroundColor: 'var(--color-bg-alt)' }}>

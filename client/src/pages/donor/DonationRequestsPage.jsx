@@ -1,134 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
 import api from '../../services/api';
 import DonationConfirmModal from '../../components/donor/DonationConfirmModal';
 import StockSkeleton from '../../components/stock/StockSkeleton';
 import StockEmpty from '../../components/stock/StockEmpty';
 import StockError from '../../components/stock/StockError';
+import StatusBadge from '../../components/common/StatusBadge';
 
+const idOf = (item) => item._id || item.id;
 export default function DonationRequestsPage() {
-  const [requests, setRequests] = useState([]);
-  const [responded, setResponded] = useState({});
-  const [confirmingId, setConfirmingId] = useState(null);
-  const [modalData, setModalData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const loadRequests = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const res = await api.getDonorRequests().catch(() => api.getRequests());
-      setRequests(res.data || []);
-    } catch {
-      setError('Unable to load nearby emergency requests.');
-    } finally {
-      setLoading(false);
-    }
+  const [requests, setRequests] = useState([]); const [profile, setProfile] = useState(null); const [selected, setSelected] = useState(null); const [loading, setLoading] = useState(true); const [confirming, setConfirming] = useState(false); const [success, setSuccess] = useState(false); const [error, setError] = useState('');
+  const load = useCallback(async () => {
+    setLoading(true); setError('');
+    try { const [response, profileResponse] = await Promise.all([api.getDonorRequests(), api.getDonorProfile()]); setRequests(response.data || []); setProfile(profileResponse.data); }
+    catch (err) { setError(err.response?.data?.message || 'Unable to load open requests.'); }
+    finally { setLoading(false); }
+  }, []);
+  useEffect(() => { load(); }, [load]);
+  const confirm = async () => {
+    if (!selected) return;
+    try { setConfirming(true); await api.acceptBloodRequest(idOf(selected)); setSuccess(true); toast.success('Your interest was sent for admin approval.'); await load(); }
+    catch (err) { toast.error(err.response?.data?.message || 'Could not accept this request.'); }
+    finally { setConfirming(false); }
   };
-
-  useEffect(() => { loadRequests(); }, []);
-
-  const handleConfirm = async (reqItem) => {
-    const id = reqItem._id || reqItem.id;
-    try {
-      setConfirmingId(id);
-      const res = await api.confirmDonation(id);
-      setResponded((prev) => ({ ...prev, [id]: true }));
-      setModalData(res.data || {
-        patientName: reqItem.patientName,
-        bloodGroup: reqItem.bloodGroup,
-        hospital: reqItem.hospital,
-        city: reqItem.city,
-        donationDate: new Date().toISOString()
-      });
-      toast.success('Donation confirmed! Thank you for stepping up.');
-    } catch (err) {
-      toast.error(err.response?.data?.message || 'Could not confirm donation. Please check your eligibility.');
-    } finally {
-      setConfirmingId(null);
-    }
-  };
-
-  return (
-    <div className="container app-container py-5">
-      <div className="mb-4">
-        <span className="badge bg-danger-subtle text-danger fw-semibold px-3 py-2 rounded-pill mb-2">
-          Urgent Matching Feed
-        </span>
-        <h1 className="h3 fw-bold mb-1">Emergency Requests Nearby</h1>
-        <p className="text-muted small mb-0">Verified hospital requests in your area needing urgent donors</p>
-      </div>
-
-      {loading ? (
-        <StockSkeleton count={3} type="table" />
-      ) : error ? (
-        <StockError message={error} onRetry={loadRequests} />
-      ) : requests.length === 0 ? (
-        <StockEmpty message="No active emergency blood requests matching your group at this moment." />
-      ) : (
-        <div className="row g-3">
-          {requests.map((r) => {
-            const reqId = r._id || r.id;
-            const isConfirmed = responded[reqId] || r.status === 'Confirmed';
-            const isProcessing = confirmingId === reqId;
-
-            return (
-              <div key={reqId} className="col-12 col-md-6">
-                <div className="premium-card p-4 h-100 d-flex flex-column justify-content-between">
-                  <div>
-                    <div className="d-flex justify-content-between align-items-center mb-3">
-                      <span className="blood-badge fs-6">{r.bloodGroup}</span>
-                      <span className="badge bg-danger px-2 py-1">{r.urgency || 'Urgent'}</span>
-                    </div>
-
-                    <h3 className="h5 fw-bold mb-1 text-dark">{r.patientName}</h3>
-                    <p className="text-muted small mb-2">
-                      <i className="bi bi-hospital me-1"></i> {r.hospital}, {r.city}
-                    </p>
-                    <p className="small text-muted mb-3">
-                      Units Needed: <strong className="text-dark">{r.units} Unit(s)</strong>
-                    </p>
-                  </div>
-
-                  <div className="pt-3 border-top">
-                    {isConfirmed ? (
-                      <button type="button" className="btn btn-sm btn-success w-100" disabled>
-                        <i className="bi bi-check-circle-fill me-1"></i> Donation Confirmed
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        className="btn btn-sm btn-blood-primary w-100 d-flex align-items-center justify-content-center gap-2"
-                        onClick={() => handleConfirm(r)}
-                        disabled={isProcessing}
-                      >
-                        {isProcessing ? (
-                          <>
-                            <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            <span>Confirming Donation...</span>
-                          </>
-                        ) : (
-                          <>
-                            <i className="bi bi-heart-fill"></i>
-                            <span>I Can Donate</span>
-                          </>
-                        )}
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      <DonationConfirmModal
-        show={!!modalData}
-        onHide={() => setModalData(null)}
-        donationData={modalData}
-      />
-    </div>
-  );
+  const closeModal = () => { setSelected(null); setSuccess(false); };
+  return <div className="container app-container py-5">
+    <div className="mb-4"><span className="badge bg-danger-subtle text-danger rounded-pill px-3 py-2 mb-2">Donor matching</span><h1 className="h3 fw-bold mb-1">Open patient requests</h1><p className="text-muted small mb-0">Patient names and contact details stay private until admin approval.</p></div>
+    {!loading && !error && !profile?.isAvailable && <div className="alert alert-warning">Your availability is paused. <Link to="/donor/profile">Update your profile availability</Link> before accepting a request.</div>}
+    {loading ? <StockSkeleton count={4} type="table" /> : error ? <StockError message={error} onRetry={load} /> : requests.length === 0 ? <StockEmpty message="No requests yet." /> : <div className="row g-3">{requests.map((request) => <div className="col-12 col-md-6" key={idOf(request)}><article className="premium-card h-100 d-flex flex-column"><div className="d-flex justify-content-between gap-2 mb-3"><span className="blood-badge">{request.bloodGroup}</span><StatusBadge status={request.status} /></div><h2 className="h5 fw-bold">{request.hospital}</h2><p className="small text-muted"><i className="bi bi-geo-alt me-1" />{request.city} · {request.units} unit(s)</p><p className="small">Urgency: <strong>{request.urgency}</strong></p><p className="small text-muted">Required by {new Date(request.requiredDate).toLocaleDateString()}</p><button type="button" className="btn btn-blood-primary mt-auto" disabled={!profile?.isAvailable} onClick={() => { setSelected(request); setSuccess(false); }}>I want to donate</button></article></div>)}</div>}
+    <DonationConfirmModal show={!!selected} request={selected} onHide={closeModal} onConfirm={confirm} loading={confirming} success={success} />
+  </div>;
 }

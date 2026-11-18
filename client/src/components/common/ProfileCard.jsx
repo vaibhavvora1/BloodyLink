@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default function ProfileCard({ user, onEdit }) {
-  if (!user) return null;
+  if (!user || user.role === 'admin') return null;
 
   const initials = user.name
     ? user.name.split(' ').map((n) => n[0]).join('').substring(0, 2).toUpperCase()
@@ -32,7 +32,7 @@ export default function ProfileCard({ user, onEdit }) {
         </div>
         <div className="d-flex justify-content-between py-1">
           <span>Contact:</span>
-          <span className="text-dark fw-medium">{user.maskedPhone || '+91 98*** **000'}</span>
+          <span className="text-dark fw-medium">{user.phone || 'Not provided'}</span>
         </div>
       </div>
 

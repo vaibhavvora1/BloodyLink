@@ -2,12 +2,16 @@ import app from './app.js';
 import mongoose from 'mongoose';
 import { connectDB } from './config/db.js';
 import { env, validateEnv } from './config/env.js';
+import { ensureBloodStockGroups } from './services/bloodStock.service.js';
+import DonationRequest from './models/DonationRequest.js';
 
 const startServer = async () => {
   let server;
   try {
     validateEnv();
     await connectDB();
+    await ensureBloodStockGroups();
+    await DonationRequest.init();
     server = app.listen(env.PORT, () => {
       console.log(`Bloodlink server listening on port ${env.PORT} in ${env.NODE_ENV} mode`);
     });

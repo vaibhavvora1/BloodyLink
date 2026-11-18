@@ -1,26 +1,21 @@
 import React from 'react';
-import CountUp from '../reactbits/CountUp';
 
 export default function ImpactStats() {
-  const stats = [
-    { label: 'Registered Donors', val: 1240, suffix: '+', icon: 'bi-people-fill' },
-    { label: 'Lives Saved', val: 3820, suffix: '+', icon: 'bi-heart-fill' },
-    { label: 'Requests Fulfilled', val: 980, suffix: '+', icon: 'bi-check-all' },
-    { label: 'Partner Hospitals', val: 45, suffix: '', icon: 'bi-hospital-fill' }
+  const steps = [
+    { label: 'Patients create a request', icon: 'bi-clipboard2-pulse' },
+    { label: 'Donors offer or accept', icon: 'bi-heart-pulse' },
+    { label: 'Admin approves and schedules', icon: 'bi-calendar2-check' }
   ];
 
   return (
     <section className="py-5 border-top border-bottom bg-white">
       <div className="container app-container">
         <div className="row g-4 text-center">
-          {stats.map((s, idx) => (
-            <div key={idx} className="col-6 col-md-3">
+          {steps.map((s) => (
+            <div key={s.label} className="col-12 col-md-4">
               <div className="p-3">
-                <i className={`bi ${s.icon} fs-2 text-danger mb-2 d-inline-block`}></i>
-                <h3 className="display-6 fw-bold mb-1 text-dark">
-                  <CountUp to={s.val} suffix={s.suffix} />
-                </h3>
-                <small className="text-muted fw-semibold">{s.label}</small>
+                <i className={`bi ${s.icon} fs-2 text-danger mb-2 d-inline-block`} />
+                <h3 className="h6 fw-bold mb-1 text-dark">{s.label}</h3>
               </div>
             </div>
           ))}

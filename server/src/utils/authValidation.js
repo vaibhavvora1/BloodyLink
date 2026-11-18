@@ -34,10 +34,9 @@ export const donorRegisterSchema = z.object({
   phone,
   password,
   bloodGroup,
-  age: z.coerce.number().int().min(18).max(100),
+  age: z.coerce.number().int().min(18).max(65),
   gender,
   city,
-  lastDonationDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Use YYYY-MM-DD for the last donation date.').optional().or(z.literal('')),
   isAvailable: z.boolean().optional()
 }).strict();
 
@@ -47,6 +46,8 @@ export const patientRegisterSchema = z.object({
   phone,
   password,
   bloodGroup,
+  age: z.coerce.number().int().min(0).max(120).optional(),
+  gender: gender.optional(),
   city,
   hospital: z.string().trim().min(2).max(150)
 }).strict();
@@ -73,10 +74,9 @@ export const donorProfileUpdateSchema = z.object({
     .optional().or(z.literal('')),
   bloodGroup: bloodGroup.optional(),
   gender: gender.optional(),
-  weight: z.coerce.number().min(45, 'Weight must be at least 45 kg for blood donation.').max(250).optional(),
-  lastDonationDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Use YYYY-MM-DD for last donation date.')
-    .refine(isNotFutureDate, 'Last donation date cannot be in the future.')
-    .optional().or(z.literal('')),
+  age: z.coerce.number().int().min(18).max(65).optional(),
+  weight: z.union([z.coerce.number().min(45, 'Weight must be at least 45 kg for blood donation.').max(250), z.literal('')]).optional(),
+  medicalNotes: z.string().trim().max(1000).optional().or(z.literal('')),
   isAvailable: z.boolean().optional()
 }).strict();
 
@@ -90,6 +90,23 @@ export const patientProfileUpdateSchema = z.object({
     .optional().or(z.literal('')),
   bloodGroup: bloodGroup.optional(),
   gender: gender.optional(),
+  age: z.coerce.number().int().min(0).max(120).optional(),
+  medicalNotes: z.string().trim().max(1000).optional().or(z.literal('')),
   hospital: z.string().trim().min(2, 'Hospital name is required.').max(150).optional(),
   emergencyContact: z.string().trim().regex(/^\+?[0-9 ()-]{7,20}$/, 'Enter a valid emergency contact phone number.').optional().or(z.literal(''))
 }).strict();
+
+const hospitalFieldsSchema = z.object({
+  name: z.string().trim().min(2).max(150),
+  contactPerson: z.string().trim().min(2).max(100),
+  phone,
+  email,
+  city,
+  address: z.string().trim().max(200).optional().or(z.literal(''))
+});
+
+export const hospitalCreateSchema = hospitalFieldsSchema.strict();
+export const hospitalUpdateSchema = hospitalFieldsSchema.partial().strict().refine(
+  (data) => Object.keys(data).length > 0,
+  'Provide at least one hospital field to update.'
+);

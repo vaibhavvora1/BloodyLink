@@ -37,3 +37,9 @@ export const refreshRateLimiter = createLimiter(
   30,
   'Too many refresh requests. Please try again in 15 minutes.'
 );
+
+export const donationRequestRateLimiter = createLimiter(
+  60 * 60 * 1000,
+  5,
+  'Too many donation requests. Please try again in one hour.'
+);

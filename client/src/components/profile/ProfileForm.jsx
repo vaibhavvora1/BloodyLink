@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
+const toFormState = (data = {}) => {
+  const normalized = { ...data };
+  for (const key of ['dateOfBirth', 'lastDonationDate']) if (normalized[key]) normalized[key] = String(normalized[key]).split('T')[0];
+  return normalized;
+};
+
 const renderInput = (f, val, onChange, error) => {
   if (f.readOnly) {
     return (
@@ -11,7 +17,8 @@ const renderInput = (f, val, onChange, error) => {
   }
   if (f.type === 'select') {
     return (
-      <select name={f.name} className={`form-select form-select-sm ${error ? 'is-invalid' : ''}`} value={val ?? ''} onChange={onChange}>
+      <select name={f.name} required={f.required} className={`form-select form-select-sm ${error ? 'is-invalid' : ''}`} value={val ?? ''} onChange={onChange}>
+        {f.required && <option value="" disabled>Select an option</option>}
         {f.options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
     );
@@ -24,10 +31,16 @@ const renderInput = (f, val, onChange, error) => {
       </div>
     );
   }
+  if (f.type === 'textarea') {
+    return <textarea name={f.name} required={f.required} maxLength={f.maxLength} rows={f.rows || 4} className={`form-control form-control-sm ${error ? 'is-invalid' : ''}`} placeholder={f.placeholder} value={val ?? ''} onChange={onChange} />;
+  }
   return (
     <input
       name={f.name}
       type={f.type || 'text'}
+      min={f.min}
+      max={f.max}
+      required={f.required}
       className={`form-control form-control-sm ${error ? 'is-invalid' : ''}`}
       placeholder={f.placeholder}
       value={val ?? ''}
@@ -43,24 +56,21 @@ export default function ProfileForm({ title, subtitle, initialData, fieldsConfig
 
   useEffect(() => {
     if (initialData) {
-      const sanitized = { ...initialData };
-      if (sanitized.dateOfBirth) sanitized.dateOfBirth = sanitized.dateOfBirth.split('T')[0];
-      if (sanitized.lastDonationDate) sanitized.lastDonationDate = sanitized.lastDonationDate.split('T')[0];
-      setFormData(sanitized);
+      setFormData(toFormState(initialData));
     }
   }, [initialData]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
-    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: null }));
+    if (errors[name]) setErrors((prev) => { const next = { ...prev }; delete next[name]; return next; });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validate) {
       const { isValid, errs } = validate(formData);
-      if (!isValid) return setErrors(errs);
+      if (!isValid) { setErrors(errs); return; }
     }
     const success = await onSave(formData);
     if (success) setIsEditing(false);
@@ -68,7 +78,7 @@ export default function ProfileForm({ title, subtitle, initialData, fieldsConfig
 
   return (
     <div className="profile-container py-4">
-      <div className="profile-card">
+      <div className="profile-card form-animate">
         <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4 pb-3 border-bottom">
           <div>
             <h1 className="h4 fw-bold mb-1 text-dark">{title}</h1>
@@ -82,7 +92,7 @@ export default function ProfileForm({ title, subtitle, initialData, fieldsConfig
         </div>
 
         {isEditing ? (
-          <form onSubmit={handleSubmit} noValidate>
+          <form onSubmit={handleSubmit} noValidate className={Object.values(errors).some(Boolean) ? 'form-has-errors' : ''}>
             <div className="row g-3">
               {fieldsConfig.map((f) => (
                 <div key={f.name} className={f.col || 'col-12 col-md-6'}>
@@ -96,7 +106,7 @@ export default function ProfileForm({ title, subtitle, initialData, fieldsConfig
               ))}
             </div>
             <div className="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
-              <button type="button" className="btn btn-sm btn-outline-secondary px-3" onClick={() => { setFormData(initialData || {}); setErrors({}); setIsEditing(false); }} disabled={isSaving}>Cancel</button>
+              <button type="button" className="btn btn-sm btn-outline-secondary px-3" onClick={() => { setFormData(toFormState(initialData)); setErrors({}); setIsEditing(false); }} disabled={isSaving}>Cancel</button>
               <button type="submit" className="btn btn-sm btn-blood-primary px-4 d-flex align-items-center gap-2" disabled={isSaving}>
                 {isSaving ? <><span className="spinner-border spinner-border-sm" role="status"></span><span>Saving...</span></> : <><i className="bi bi-check2-circle"></i><span>Save Changes</span></>}
               </button>

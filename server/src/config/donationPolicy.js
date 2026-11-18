@@ -1,0 +1,2 @@
+export const MIN_DONATION_INTERVAL_DAYS = 90;
+export const DONATION_DATE_WINDOW_DAYS = 30;

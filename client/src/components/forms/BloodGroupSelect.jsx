@@ -31,7 +31,7 @@ export default function BloodGroupSelect({
         className={`form-select ${error ? 'is-invalid' : ''}`}
         aria-invalid={!!error}
       >
-        {includeAllOption && <option value="">{allLabel}</option>}
+        {includeAllOption ? <option value="">{allLabel}</option> : <option value="" disabled>Select a blood group</option>}
         {BLOOD_GROUPS.map((group) => (
           <option key={group} value={group}>
             {group}

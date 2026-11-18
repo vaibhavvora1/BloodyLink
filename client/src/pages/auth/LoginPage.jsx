@@ -92,7 +92,7 @@ export default function LoginPage() {
             label="Email Address"
             name="email"
             type="email"
-            placeholder="you@example.com"
+            placeholder="Email address"
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             error={errors.email}

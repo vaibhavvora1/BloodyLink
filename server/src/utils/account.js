@@ -6,12 +6,14 @@ export const ACCOUNT_MODELS = Object.freeze({ donor: Donor, patient: Patient, ad
 
 export const accountModelForRole = (role) => ACCOUNT_MODELS[role] || null;
 
-export const publicUser = (account) => ({
-  id: account.id,
-  name: account.name,
-  email: account.email,
-  role: account.role,
-  ...(account.phone ? { phone: account.phone } : {}),
-  ...(account.bloodGroup ? { bloodGroup: account.bloodGroup } : {}),
-  ...(account.city ? { city: account.city } : {})
-});
+export const publicUser = (account) => account.role === 'admin'
+  ? { id: account.id, role: account.role }
+  : {
+      id: account.id,
+      name: account.name,
+      email: account.email,
+      role: account.role,
+      ...(account.phone ? { phone: account.phone } : {}),
+      ...(account.bloodGroup ? { bloodGroup: account.bloodGroup } : {}),
+      ...(account.city ? { city: account.city } : {})
+    };
