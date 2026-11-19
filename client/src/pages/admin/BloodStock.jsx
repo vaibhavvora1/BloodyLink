@@ -1,8 +1,19 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import api from '../../services/api';
-import AdminMenu from '../../components/admin/AdminMenu';
+import DashboardLayout from '../../components/layout/DashboardLayout';
 import StockSkeleton from '../../components/stock/StockSkeleton';
+
+const adminNavItems = [
+  { label: 'Dashboard', icon: 'bi-speedometer2', to: '/admin/dashboard?section=dashboard' },
+  { label: 'Requests & Matches', icon: 'bi-diagram-3', to: '/admin/dashboard?section=requests' },
+  { label: 'Donors', icon: 'bi-heart-pulse', to: '/admin/dashboard?section=donors' },
+  { label: 'Patients', icon: 'bi-person-vcard', to: '/admin/dashboard?section=patients' },
+  { label: 'Blood Bank', icon: 'bi-droplet-half', to: '/admin/blood-stock', active: (location) => location.pathname === '/admin/blood-stock' },
+  { label: 'Hospitals', icon: 'bi-hospital', to: '/admin/dashboard?section=hospitals' },
+  { label: 'Messages', icon: 'bi-chat-left-text', to: '/admin/dashboard?section=messages' },
+  { label: 'Settings', icon: 'bi-gear', to: '/admin/dashboard?section=settings' }
+];
 
 const groups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 const emptyForm = { bloodGroup: '', units: '' };
@@ -66,7 +77,7 @@ export default function BloodStock() {
     }
   };
 
-  return <div className="admin-layout"><AdminMenu /><main className="admin-main">
+  return <DashboardLayout title="Blood bank inventory" roleLabel="Admin workspace" navItems={adminNavItems} onRefresh={load} loading={loading}>
     <div className="mb-4"><span className="text-uppercase small fw-bold text-danger">Admin workspace</span><h1 className="h3 fw-bold mb-1">Blood bank inventory</h1><p className="text-muted small mb-0">Incoming donations stay separate until an administrator marks them completed.</p></div>
     <form className="premium-card mb-4" onSubmit={submit}>
       <h2 className="h5 fw-bold">{editingId ? `Set ${form.bloodGroup} available units` : 'Add available units'}</h2>
@@ -80,5 +91,5 @@ export default function BloodStock() {
       <div className="row g-2 mb-3"><div className="col-12 col-md-5"><label className="visually-hidden" htmlFor="stock-search">Search blood group</label><input id="stock-search" className="form-control" placeholder="Search blood group" value={filters.search} onChange={(event) => setFilters({ ...filters, search: event.target.value })} /></div><div className="col-6 col-md-3"><select aria-label="Filter by blood group" className="form-select" value={filters.bloodGroup} onChange={(event) => setFilters({ ...filters, bloodGroup: event.target.value })}><option value="">All blood groups</option>{groups.map((group) => <option key={group}>{group}</option>)}</select></div><div className="col-6 col-md-4"><select aria-label="Filter by stock level" className="form-select" value={filters.status} onChange={(event) => setFilters({ ...filters, status: event.target.value })}><option value="">All stock levels</option><option>Critical</option><option>Low</option><option>Available</option></select></div></div>
       {loading ? <StockSkeleton count={5} type="table" /> : error ? <div className="alert alert-danger">{error}<button type="button" className="btn btn-sm btn-outline-danger ms-2" onClick={load}>Retry</button></div> : items.length === 0 ? <div className="empty-state">No blood stock records yet.</div> : <div className="table-responsive"><table className="table align-middle"><thead><tr><th>Group</th><th>Available</th><th>Incoming</th><th>Level</th><th>Updated</th><th /></tr></thead><tbody>{items.map((item) => <tr key={item._id}><td><span className="blood-badge">{item.bloodGroup}</span></td><td className="fw-bold">{item.availableUnits}</td><td>{item.incomingUnits}</td><td><span className={`badge ${item.status === 'Critical' ? 'bg-danger' : item.status === 'Low' ? 'bg-warning text-dark' : 'bg-success'}`}>{item.status}</span></td><td>{item.updatedAt ? new Date(item.updatedAt).toLocaleDateString() : '—'}</td><td><div className="d-flex gap-2"><button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => edit(item)}>Edit</button><button type="button" className="btn btn-sm btn-outline-danger" onClick={() => clear(item)}>Clear</button></div></td></tr>)}</tbody></table></div>}
     </section>
-  </main></div>;
+  </DashboardLayout>;
 }

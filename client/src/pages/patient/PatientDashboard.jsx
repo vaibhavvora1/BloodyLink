@@ -6,6 +6,14 @@ import { useAuth } from '../../context/AuthContext';
 import StockSkeleton from '../../components/stock/StockSkeleton';
 import StockError from '../../components/stock/StockError';
 import StatusBadge from '../../components/common/StatusBadge';
+import DashboardLayout from '../../components/layout/DashboardLayout';
+import StatsGrid from '../../components/common/StatsGrid';
+
+const patientNavItems = [
+  { label: 'Dashboard', icon: 'bi-speedometer2', to: '/patient/dashboard' },
+  { label: 'Create Request', icon: 'bi-plus-circle', to: '/patient/request' },
+  { label: 'Profile', icon: 'bi-person-circle', to: '/patient/profile' }
+];
 
 const idOf = (item) => item._id || item.id;
 export default function PatientDashboard() {
@@ -27,9 +35,15 @@ export default function PatientDashboard() {
     finally { setSendingId(''); }
   };
 
-  return <div className="container app-container py-5">
-    <div className="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4"><div><span className="badge bg-danger-subtle text-danger rounded-pill px-3 py-2 mb-2">Patient dashboard</span><h1 className="h3 fw-bold mb-1">Your requests and matches</h1><p className="text-muted small mb-0">Donor contact details appear only after an admin approves a match.</p></div><Link to="/patient/request" className="btn btn-blood-primary"><i className="bi bi-plus-lg me-1" />Create blood request</Link></div>
+  return <DashboardLayout title="Your requests and matches" roleLabel="Patient workspace" navItems={patientNavItems} onRefresh={() => load()} loading={loading}>
     {loading ? <StockSkeleton count={3} /> : error ? <StockError message={error} onRetry={load} /> : <>
+      <StatsGrid stats={[
+        { label: 'Total Requests', value: requests.length, icon: 'bi-clipboard-heart', tone: 'red' },
+        { label: 'Pending', value: requests.filter((item) => ['Requested', 'Pending Admin Approval'].includes(item.status)).length, icon: 'bi-hourglass-split', tone: 'gold' },
+        { label: 'Fulfilled', value: requests.filter((item) => ['Fulfilled', 'Completed'].includes(item.status)).length, icon: 'bi-check2-circle', tone: 'red' },
+        { label: 'Nearby Donors', value: offers.length, icon: 'bi-geo-alt', tone: 'gold' }
+      ]} />
+      <div className="d-flex flex-wrap justify-content-end align-items-center gap-3 my-4"><Link to="/patient/request" className="btn btn-blood-primary"><i className="bi bi-plus-lg me-1" />Create blood request</Link></div>
       <section className="mb-5"><div className="d-flex justify-content-between align-items-center mb-3"><h2 className="h5 fw-bold mb-0">Your blood requests</h2><span className="text-muted small">{requests.length} total</span></div>
         {requests.length ? <div className="row g-3">{requests.map((request) => <div className="col-12 col-lg-6" key={idOf(request)}><article className="premium-card h-100"><div className="d-flex justify-content-between gap-2 mb-3"><span className="blood-badge">{request.bloodGroup}</span><StatusBadge status={request.status} /></div><h3 className="h6 fw-bold">{request.hospital}</h3><p className="text-muted small mb-3">{request.city} · {request.units} unit(s) · {request.urgency}</p><div className="small d-flex flex-wrap justify-content-between gap-2 border-top pt-3"><span>Required: {new Date(request.requiredDate).toLocaleDateString()}</span><span>Contact: {request.contactPhone}</span></div></article></div>)}</div> : <div className="empty-state">No requests yet. <Link to="/patient/request">Create your first request</Link>.</div>}
       </section>
@@ -42,5 +56,5 @@ export default function PatientDashboard() {
 
       <section><h2 className="h5 fw-bold mb-3">Inbox</h2>{notifications.length ? notifications.map((note) => <article key={idOf(note)} className="notification-row"><div className="d-flex justify-content-between gap-3"><strong>{note.title}</strong><small className="text-muted">{new Date(note.createdAt).toLocaleString()}</small></div><p className="mb-0 mt-2">{note.message}</p></article>) : <div className="empty-state">No notifications yet.</div>}</section>
     </>}
-  </div>;
+  </DashboardLayout>;
 }

@@ -6,6 +6,13 @@ import { useAuth } from '../../context/AuthContext';
 import FormInput from '../../components/forms/FormInput';
 import BloodGroupSelect from '../../components/forms/BloodGroupSelect';
 import UrgencySelector from '../../components/forms/UrgencySelector';
+import DashboardLayout from '../../components/layout/DashboardLayout';
+
+const patientNavItems = [
+  { label: 'Dashboard', icon: 'bi-speedometer2', to: '/patient/dashboard' },
+  { label: 'Create Request', icon: 'bi-plus-circle', to: '/patient/request', active: (location) => location.pathname === '/patient/request' },
+  { label: 'Profile', icon: 'bi-person-circle', to: '/patient/profile' }
+];
 
 export default function BloodRequestPage() {
   const navigate = useNavigate();
@@ -40,8 +47,8 @@ export default function BloodRequestPage() {
   };
 
   const change = (key, value) => { setFormData((current) => ({ ...current, [key]: value })); setErrors((current) => ({ ...current, [key]: '' })); };
-  return <div className="container app-container py-5">
-    <section className="premium-card form-animate mx-auto p-4" style={{ maxWidth: 680 }}>
+  return <DashboardLayout title="Create a blood request" roleLabel="Patient workspace" navItems={patientNavItems}>
+    <section className="premium-card form-animate mx-auto p-4 dashboard-request-card">
       <div className="text-center mb-4"><span className="badge bg-danger-subtle text-danger rounded-pill px-3 py-2 mb-2">Patient request</span><h1 className="h3 fw-bold">Create a blood request</h1><p className="text-muted small mb-0">Your contact details remain private until an admin approves a match.</p></div>
       <form onSubmit={handleSubmit} noValidate>
         <div className="row g-3"><div className="col-12 col-sm-6"><BloodGroupSelect label="Blood group" value={formData.bloodGroup} onChange={(e) => change('bloodGroup', e.target.value)} required />{errors.bloodGroup && <div className="text-danger small mt-1">{errors.bloodGroup}</div>}</div><div className="col-12 col-sm-6"><FormInput label="Units needed" name="units" type="number" min="1" max="10" value={formData.units} onChange={(e) => change('units', e.target.value)} error={errors.units} required /></div>
@@ -52,5 +59,5 @@ export default function BloodRequestPage() {
         <button className="btn btn-blood-primary w-100 py-3 mt-4" type="submit" disabled={loading}>{loading ? <><span className="spinner-border spinner-border-sm me-2" />Creating request…</> : 'Submit blood request'}</button>
       </form>
     </section>
-  </div>;
+  </DashboardLayout>;
 }

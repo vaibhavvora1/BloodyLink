@@ -4,6 +4,13 @@ import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 import ProfileForm from '../../components/profile/ProfileForm';
 import StockSkeleton from '../../components/stock/StockSkeleton';
+import DashboardLayout from '../../components/layout/DashboardLayout';
+
+const patientNavItems = [
+  { label: 'Dashboard', icon: 'bi-speedometer2', to: '/patient/dashboard' },
+  { label: 'Create Request', icon: 'bi-plus-circle', to: '/patient/request' },
+  { label: 'Profile', icon: 'bi-person-circle', to: '/patient/profile', active: (location) => location.pathname === '/patient/profile' }
+];
 
 const patientFieldsConfig = [
   { name: 'name', label: 'Full Name', required: true, placeholder: 'Full name' },
@@ -94,11 +101,11 @@ export default function PatientProfile() {
   };
 
   if (loading) {
-    return <div className="container app-container py-5"><StockSkeleton count={4} /></div>;
+    return <DashboardLayout title="Patient profile" roleLabel="Patient workspace" navItems={patientNavItems}><StockSkeleton count={4} /></DashboardLayout>;
   }
 
   return (
-    <div className="container app-container py-4">
+    <DashboardLayout title="Patient profile" roleLabel="Patient workspace" navItems={patientNavItems}>
       <ProfileForm
         title="Patient Profile & Medical Contact"
         subtitle="Maintain current emergency contact and hospital details for blood requisition"
@@ -108,6 +115,6 @@ export default function PatientProfile() {
         isSaving={isSaving}
         validate={validate}
       />
-    </div>
+    </DashboardLayout>
   );
 }
